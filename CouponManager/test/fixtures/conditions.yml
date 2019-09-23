@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  is_primitive: 1
+  operator: 1
+  comparator: 1
+  attribute: 1
+  value: 1
+
+two:
+  is_primitive: 1
+  operator: 1
+  comparator: 1
+  attribute: 1
+  value: 1

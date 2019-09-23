@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  active: false
+  cupon_code: 1
+  type: 1
+  return_value: 1
+  is_percentage: false
+
+two:
+  name: MyString
+  active: false
+  cupon_code: 1
+  type: 1
+  return_value: 1
+  is_percentage: false
