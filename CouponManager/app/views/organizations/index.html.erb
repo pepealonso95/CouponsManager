@@ -1,0 +1,13 @@
+<div>
+  <% @organizations.each do |organization| %>
+    <div><%= organization.name %></div><br>
+    <div>
+      <%= link_to 'Organization Detail', organization %><br>
+      <%= link_to 'Edit', edit_organization_path(organization) %><br>
+      <%= link_to 'Destroy', organization,  method: :delete, data: { confirm: 'Are you sure?' } %>
+    </div>
+    <hr>
+    <br>
+  <% end %>
+</div>
+<%= link_to 'New Organization', new_organization_path %>

@@ -1,2 +1,4 @@
-<h1>Organizations#new</h1>
-<p>Find me in app/views/organizations/new.html.erb</p>
+<% content_for :title do %>Organizacion<% end %>
+<div class="form">
+  <%= render 'form', organization: @organization %>
+</div>

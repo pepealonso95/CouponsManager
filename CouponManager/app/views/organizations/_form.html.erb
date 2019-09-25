@@ -1,0 +1,7 @@
+<%= form_with(model: organization, local: true) do |form| %>
+  <%= form.label "Nombre" %>
+  <%= form.text_field :name, autofocus: true %>
+  <br/>
+  <br/>
+  <%= form.submit "Crear Organizacion", class: 'submit' %>
+<% end %>
