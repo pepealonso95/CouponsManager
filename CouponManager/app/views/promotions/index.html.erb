@@ -1,6 +1,13 @@
 <h1>Listado de promotions</h1>
 <ul>
-<% @promotions.each do |p| %>
-<li><%= p.name %></li>
+<% @promotions.each do |promotion| %>
+ <div><%= promotion.name %></div><br>
+    <div>
+      <%= link_to 'Promotion Detail', promotion %><br>
+      <%= link_to 'Edit', edit_promotion_path(promotion) %><br>
+      <%= link_to 'Destroy', promotion,  method: :delete, data: { confirm: 'Are you sure?' } %>
+    </div>
+    <hr>
+    <br>
 <% end %>
 </ul>

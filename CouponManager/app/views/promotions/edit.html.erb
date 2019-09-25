@@ -1,2 +1,5 @@
-<h1>Promotions#edit</h1>
-<p>Find me in app/views/promotions/edit.html.erb</p>
+<% content_for :title do %>Promotion<% end %>
+<div class="form">
+  <%= render 'form', promotion: @promotion %>
+</div>
+
