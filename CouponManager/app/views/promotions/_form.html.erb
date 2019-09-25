@@ -1,0 +1,21 @@
+<% if @promotion.errors.any? %>
+  <div class="alert alert-danger" role="alert">
+    Hubo errores al crear el promotion
+  </div>
+<% end %>
+
+<%= form_with(model: promotion, local: true) do |form| %>
+  <%= form.label :name %>
+  <br/>
+  <%= form.text_field :name, autofocus: true %>
+  <%= promotion.errors[:name].join(', ') %>
+  <br/>
+  <br/>
+  <%= form.label :coupon_code %>
+  <br/>
+  <%= form.text_field :coupon_code %>
+  <%= promotion.errors[:coupon_code].join(', ') %>
+  <br/>
+  <br/>
+  <%= form.submit 'Submit', class: 'submit' %>
+<% end %>

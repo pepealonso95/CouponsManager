@@ -1,2 +1,6 @@
-<h1>Promotions#new</h1>
-<p>Find me in app/views/promotions/new.html.erb</p>
+<div>
+  <% content_for :name do %>Promotion<% end %>
+  <div class="form">
+    <%= render 'form', promotion: @promotion %>
+  </div>
+</div>
