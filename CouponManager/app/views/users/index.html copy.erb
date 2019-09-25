@@ -1,0 +1,14 @@
+<div>
+  <% @users.each do |user| %>
+    <div><%= user.name %></div><br>
+    <div><%= user.email %></div><br>
+    <div>
+      <%= link_to 'User Detail', user %><br>
+      <%= link_to 'Edit', edit_user_path(user) %><br>
+      <%= link_to 'Destroy', user,  method: :delete, data: { confirm: 'Are you sure?' } %>
+    </div>
+    <hr>
+    <br>
+  <% end %>
+</div>
+<%= link_to 'New User', new_user_path %>

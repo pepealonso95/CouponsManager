@@ -14,7 +14,12 @@ class UsersController < ApplicationController
   def destroy
   end
 
+  
   def index
     @users = User.all
-    end
+  end
+
+  def show
+    @user = User.find(id_param)
+  end
 end

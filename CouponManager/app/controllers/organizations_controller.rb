@@ -28,9 +28,10 @@ class OrganizationsController < ApplicationController
 
   def destroy
     @organization = Organization.find(id_param)
-    if @organization.destroy
-      redirect_to organizations_path
-    end
+    @organization.destroy
+    
+    redirect_to organizations_path
+    
   end
 
   def index
