@@ -32,8 +32,8 @@
   </div>
   
   <div class="field">
-    <%= f.label :organization %><br />
-    <%= f.text_field :organization, autocomplete: "organization" %>
+    <%= f.label :organization_id %><br />
+    <%= f.select(:organization_id, Organization.all.map { |organization| [organization.name, organization.id] }) %>
   </div>
 
 
