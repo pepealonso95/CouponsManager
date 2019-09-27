@@ -1,3 +1,3 @@
 class Promotion < ApplicationRecord
-    belongs_to :condition, optional: true 
+    has_one :condition, optional: true 
 end
