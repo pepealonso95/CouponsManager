@@ -1,5 +1,6 @@
 
 Rails.application.routes.draw do
+  get "promotions/testPromotion" => "promotions#testPromotion"
   devise_for :users
   resources :users
   resources :organizations

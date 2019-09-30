@@ -36,6 +36,23 @@ class PromotionsController < ApplicationController
   def destroy
   end
 
+
+  def testPromotion
+    @condition3 = Condition.new()
+    @condition3.generatePrimitiveCondition("EQUALS", "TOTAL", 2)
+    @condition2 = Condition.new()
+    @condition2.generatePrimitiveCondition("EQUALS", "TOTAL", 3)
+    
+    @condition = Condition.new()
+    @condition.generateNestedCondition("AND", @condition3, @condition2)
+    @result = @condition.getResult(2,3,4)
+    render :create
+  end
+
+  def newCondition
+    
+  end
+
   def index
     @promotions = Promotion.all
   end
