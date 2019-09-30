@@ -1,2 +1,59 @@
+
+<%= javascript_include_tag params[:controller] %>
+
 result
 <%= @result.inspect %>
+
+
+<div id="conditions"></div>
+<div id="condition0" class="condition">
+    <select id="select-condition-type0" class="select-condition-type">
+    <option value="none">None</option>
+    <option value="primitive">Condicion</option>
+    <option value="non-primitive">Subcondiciones</option>
+    </select>
+    <div id="condition-element0" class="selected-condition"></div>
+    </div>
+</div>
+
+
+<%# <a id="add-condition" onclick="addCondition()">Add Condition</a> %>
+
+
+
+<%# <div id="" class="condition">
+    <select class="select-condition-type">
+    <option value="none">None</option>
+    <option value="primitive">Condicion</option>
+    <option value="non-primitive">Subcondiciones</option>
+    </select>
+    <div class="selected-condition"></div>
+    </div>
+</div> %>
+<%# 
+    
+<div class="primitive-condition">
+    <select class="expresion-parameter">
+    <option value="TOTAL">Total</option>
+    <option value="PRODUCT_SIZE">Product Size</option>
+    <option value="QUANTITY">Quantity</option>
+    </select>
+    <select class="comparator">
+    <option value="GREATER">></option>
+    <option value="GREATER_EQUAL">>=</option>
+    <option value="EQUALS">=</option>
+    <option value="DIFFERENT">=/</option>
+    <option value="LESS_EQ"><=</option>
+    <option value="LESS"><</option>
+    </select>
+    <input class="compare-value" type="number" name="compare-value" min="1" max="5">
+</div>
+
+<div class="nested-condition">
+    <div class="sub-condition1"></div>
+    <select class="comparator">
+        <option value="AND">AND</option>
+        <option value="OR">OR</option>
+    </select>
+    <div class="sub-condition2"></div>
+</div> %>
