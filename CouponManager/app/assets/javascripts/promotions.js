@@ -1,65 +1,94 @@
 var Counter = 0;
 var ConditionObject = {};
 $( document ).ready(function() {
-    console.log( "ready!" );
-
+    ConditionObject = {};
+    getPrimitiveCondition($('#condition-element0'), ConditionObject);
     $('.select-condition-type').change(function(){
         var id = $(this).attr('id').replace("select-condition-type", "");;
         var value = $(this).val();
         if(value=="primitive"){
-            var html = getPrimitiveCondition(id);
-            $('#condition-element'+id).html(html);
+            ConditionObject = {};
+            getPrimitiveCondition($('#condition-element'+id), ConditionObject);
         }else if(value=="non-primitive"){
-            var html = getNestedCondition(id);
-            $('#condition-element'+id).html(html);
+            ConditionObject = {};
+           getNestedCondition($('#condition-element'+id), ConditionObject);
         }
+        
      });
 
 });
 
-
-
-addCondition = function(id){
-    Counter++;
-    ConditionObject[Counter] = {};
-    var html = getNewCondition();
-    $('#conditions').append(html);
-    $('.select-condition-type').change(function(){
-        var id = $(this).attr('id').replace("select-condition-type", "");;
-        var html = getPrimitiveCondition(id);
-        $('#condition-element'+id).html(html);
-     });
+makeConditionChange = function (id, cond){
+    getPrimitiveCondition($('#condition-element'+id), cond);
+    $('#select-condition-type'+id).change(function(){
+        var id = $(this).attr('id').replace("select-condition-type", "");
+        var value = $(this).val();
+        if(value=="primitive"){
+            getPrimitiveCondition($('#condition-element'+id), cond);
+        }else if(value=="non-primitive"){
+            getNestedCondition($('#condition-element'+id), cond);
+        }else{
+            cond = {};
+        }
+    });
 }
 
-getNewCondition = function (id){
-    ConditionObject[id] = {isPrimitive: false}
+onParameterChange = function (id, cond){
+    $('#expresion-parameter'+id).change(function(){
+        var value = $(this).val();
+        cond.atribute = value;
+    });
+}
+
+onComparatorChange = function (id, cond){
+    $('#comparator'+id).change(function(){
+        var value = $(this).val();
+        cond.comparator = value;
+    });
+}
+
+onOperatorChange = function (id, cond){
+    $('#operator'+id).change(function(){
+        var value = $(this).val();
+        cond.operator = value;
+    });
+}
+
+onValueChange = function (id, cond){
+    $('#compare-value'+id).on("keyup keydown change",function(){
+        var value = $(this).val();
+        cond.value = value;
+    });
+}
+
+getNewCondition = function (object, cond){
+    var nextId = Counter++;
 var myvar = '<div class="condition">'+
-`    <select id="select-condition-type${id+1}" class="select-condition-type">`+
-'    <option value="none">None</option>'+
+`    <select id="select-condition-type${nextId}" class="select-condition-type">`+
 '    <option value="primitive">Condicion</option>'+
 '    <option value="non-primitive">Subcondiciones</option>'+
-'    </select>'+
-`    <div id="condition-element${id+1}" class="selected-condition"></div>`+
+'    </select><br>'+
+`    <div id="condition-element${nextId}" class="selected-condition"></div>`+
 '    </div>'+
 '</div>';
-	return myvar;
-
+    object.html(myvar);
+    makeConditionChange(nextId, cond);
 }
 
+getPrimitiveCondition = function(object, cond){
+    var nextId = Counter++;
+    cond.isPrimitive = true;
+    cond.atribute = "TOTAL";
+    cond.comparator = "GREATER";
+    cond.value = 0;
 
-
-
-getPrimitiveCondition = function(id){
-
-    ConditionObject[id] = {isPrimitive: false}
-
-var myvar = `<div id="primitive-condition${id}" class="primitive-condition">`+
-'    <select class="expresion-parameter">'+
+var myvar = `<div id="primitive-condition${nextId}" class="primitive-condition">`+
+`    <select id="expresion-parameter${nextId}" class="expresion-parameter">`+
 '    <option value="TOTAL">Total</option>'+
 '    <option value="PRODUCT_SIZE">Product Size</option>'+
 '    <option value="QUANTITY">Quantity</option>'+
 '    </select>'+
-'    <select class="comparator">'+
+`    <select id="comparator${nextId}" class="comparator">`+
 '    <option value="GREATER">></option>'+
 '    <option value="GREATER_EQUAL">>=</option>'+
 '    <option value="EQUALS">=</option>'+
@@ -67,24 +96,34 @@ var myvar = `<div id="primitive-condition${id}" class="primitive-condition">`+
 '    <option value="LESS_EQ"><=</option>'+
 '    <option value="LESS"><</option>'+
 '    </select>'+
-'    <input class="compare-value" type="number" name="compare-value" min="1" max="5">'+
+`    <input id="compare-value${nextId}" class="compare-value" type="number" name="compare-value" min="0" value="0">`+
 '</div>';
-
-return myvar;
-	
-
+object.html(myvar);
+onParameterChange(nextId, cond);
+onComparatorChange(nextId, cond);
+onValueChange(nextId, cond);
 }
 
-getNestedCondition = function(id){
-    var nextId = id+1;
+getNestedCondition = function(object, cond){
+    var nextId = Counter++;
+    cond.isPrimitive = false;
+    cond.operator = "AND";
+    cond.condition1 = {};
+    cond.condition2 = {};
     var myvar = `<div id="nested-condition${nextId}" class="nested-condition">`+
-    `    <div class="sub-conditionA">${getNewCondition(nextId)}</div>`+
-    '    <select class="comparator">'+
+    `    <div id="sub-conditionA${nextId}" class="sub-conditionA"></div>`+
+    `    <select id="operator${nextId}" class="operator">`+
     '        <option value="AND">AND</option>'+
     '        <option value="OR">OR</option>'+
-    '    </select>'+
-    `    <div class="sub-conditionB">${getNewCondition(nextId)}</div>`+
+    '    </select><br>'+
+    `    <div id="sub-conditionB${nextId}" class="sub-conditionB"></div>`+
     '</div>';
-    return myvar;
-    
+    object.html(myvar);
+    getNewCondition($(`#sub-conditionA${nextId}`), cond.condition1);
+    getNewCondition($(`#sub-conditionB${nextId}`), cond.condition2);
+    onOperatorChange(nextId, cond);
     }
+
+printCondition = function(){
+    console.log(ConditionObject);
+}

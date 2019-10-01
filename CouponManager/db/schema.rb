@@ -56,9 +56,12 @@ ActiveRecord::Schema.define(version: 2019_09_27_224310) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.bigint "organization_id", null: false
+    t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "invitations", "organizations"
   add_foreign_key "invitations", "users"
+  add_foreign_key "users", "organizations"
 end
