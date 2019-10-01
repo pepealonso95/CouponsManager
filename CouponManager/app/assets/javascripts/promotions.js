@@ -2,6 +2,13 @@ var Counter = 0;
 var ConditionObject = {};
 $( document ).ready(function() {
     ConditionObject = {};
+
+    $("form").submit(function (e) { 
+        $('#promotion_condition').val(JSON.stringify(ConditionObject));
+        return true;
+        
+    });
+    $('#promotion_condition').val(JSON.stringify(ConditionObject));
     getPrimitiveCondition($('#condition-element0'), ConditionObject);
     $('.select-condition-type').change(function(){
         var id = $(this).attr('id').replace("select-condition-type", "");;
@@ -124,6 +131,6 @@ getNestedCondition = function(object, cond){
     onOperatorChange(nextId, cond);
     }
 
-printCondition = function(){
-    console.log(ConditionObject);
+saveCondition = function(){
+    $('#promotion_condition').val(JSON.stringify(ConditionObject));
 }

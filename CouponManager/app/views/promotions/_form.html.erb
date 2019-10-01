@@ -1,3 +1,11 @@
+
+<%= javascript_include_tag params[:controller] %>
+
+result
+<%= @result.inspect %>
+
+
+
 <% if @promotion.errors.any? %>
   <div class="alert alert-danger" role="alert">
     Hubo errores al crear el promotion
@@ -16,6 +24,19 @@
   <%= form.text_field :cupon_code %>
   <%= promotion.errors[:cupon_code].join(', ') %>
   <br/>
+  <br/>
+  <div id="condition0" class="condition">
+    <select id="select-condition-type0" class="select-condition-type">
+    <option value="primitive">Condicion</option>
+    <option value="non-primitive">Subcondiciones</option>
+    </select>
+    <div id="condition-element0" class="selected-condition"></div>
+    </div>
+  </div>
+  <br/>
+  <%= form.text_field :condition %>
+  <%# <br/>
+  <a id="add-condition" onclick="saveCondition()">Save Condition</a> %>
   <br/>
   <%= form.submit 'Submit', class: 'submit' %>
 <% end %>

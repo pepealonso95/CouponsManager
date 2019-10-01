@@ -58,11 +58,11 @@ class PromotionsController < ApplicationController
   end
 
   def promotion_params
-    params.require(:promotion).permit(:name, :cupon_code)
+    params.require(:promotion).permit(:name, :cupon_code, :condition)
   end
 
   def edit_promotion_params
-    params.require(:promotion).permit(:name, :cupon_code)
+    params.require(:promotion).permit(:name, :cupon_code, :condition)
   end
 
   def promotion_id
