@@ -5,6 +5,7 @@ $( document ).ready(function() {
 
     $("form").submit(function (e) { 
         $('#promotion_condition').val(JSON.stringify(ConditionObject));
+        var promo = $('#promotion_condition').val();
         return true;
         
     });
@@ -43,7 +44,7 @@ makeConditionChange = function (id, cond){
 onParameterChange = function (id, cond){
     $('#expresion-parameter'+id).change(function(){
         var value = $(this).val();
-        cond.atribute = value;
+        cond.attribute = value;
     });
 }
 
@@ -64,7 +65,7 @@ onOperatorChange = function (id, cond){
 onValueChange = function (id, cond){
     $('#compare-value'+id).on("keyup keydown change",function(){
         var value = $(this).val();
-        cond.value = value;
+        cond.value = parseInt(value);
     });
 }
 
@@ -84,9 +85,9 @@ var myvar = '<div class="condition">'+
 
 getPrimitiveCondition = function(object, cond){
     var nextId = Counter++;
-    cond.isPrimitive = true;
-    cond.atribute = "TOTAL";
-    cond.comparator = "GREATER";
+    cond.is_primitive = true;
+    cond.attribute = "TOTAL";
+    cond.comparator = "GREAT";
     cond.value = 0;
 
 var myvar = `<div id="primitive-condition${nextId}" class="primitive-condition">`+
@@ -96,10 +97,10 @@ var myvar = `<div id="primitive-condition${nextId}" class="primitive-condition">
 '    <option value="QUANTITY">Quantity</option>'+
 '    </select>'+
 `    <select id="comparator${nextId}" class="comparator">`+
-'    <option value="GREATER">></option>'+
-'    <option value="GREATER_EQUAL">>=</option>'+
+'    <option value="GREAT">></option>'+
+'    <option value="GREAT_EQ">>=</option>'+
 '    <option value="EQUALS">=</option>'+
-'    <option value="DIFFERENT">=/</option>'+
+'    <option value="NOT_EQUALS">=/</option>'+
 '    <option value="LESS_EQ"><=</option>'+
 '    <option value="LESS"><</option>'+
 '    </select>'+
@@ -113,7 +114,7 @@ onValueChange(nextId, cond);
 
 getNestedCondition = function(object, cond){
     var nextId = Counter++;
-    cond.isPrimitive = false;
+    cond.is_primitive = false;
     cond.operator = "AND";
     cond.condition1 = {};
     cond.condition2 = {};

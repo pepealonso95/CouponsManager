@@ -37,17 +37,21 @@ class PromotionsController < ApplicationController
   end
 
 
-  def testPromotion
-    @condition3 = Condition.new()
-    @condition3.generatePrimitiveCondition("EQUALS", "TOTAL", 2)
-    @condition2 = Condition.new()
-    @condition2.generatePrimitiveCondition("EQUALS", "TOTAL", 3)
-    
-    @condition = Condition.new()
-    @condition.generateNestedCondition("AND", @condition3, @condition2)
-    @result = @condition.getResult(2,3,4)
+  def evaluate
+    @promotion = Promotion.find(promotion_id)
+    require 'json'
+    condition = JSON.parse(@promotion.condition)
+    @result = Condition.getResult(condition,total,quantity,product_size)
     render :create
   end
+
+
+  # def testPromotion
+  #   @promotion = Promotion.find(5)
+  #   @result = Condition.new(@promotion.condition)
+  #   @result = @condition.getResult(30,300,400)
+  #   render :create
+  # end
 
   def newCondition
     
@@ -67,5 +71,25 @@ class PromotionsController < ApplicationController
 
   def promotion_id
     params.require(:id)
+  end
+
+  def total
+    params.require(:total).to_i
+  end
+
+  def quantity
+    params.permit(:quantity)['quantity'].to_i
+  end
+
+  def product_size
+    params.permit(:product_size)['product_size'].to_i
+  end
+
+  def cupon_code
+    params.permit(:cupon_code)
+  end
+
+  def transaction_id
+    params.permit(:transaction_id)
   end
 end
