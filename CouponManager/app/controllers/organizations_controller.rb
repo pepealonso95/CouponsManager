@@ -1,4 +1,7 @@
 class OrganizationsController < ApplicationController
+  # include EventEmitter
+  before_action :is_admin?, only: [:new, :create, :update, :edit, :destroy]
+
   def new
     @organization = Organization.new
   end

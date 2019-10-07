@@ -1,7 +1,10 @@
 <h1>Listado de promotions</h1>
 <ul>
 <% @promotions.each do |promotion| %>
- <div><%= promotion.name %></div><br>
+ <div>Code: <%= promotion.cupon_code %></div><br>
+ <div>Name: <%= promotion.name %></div><br>
+ <div>Type: <%= promotion.promotion_type==0 ? "Discount" : "Coupon"%></div><br>
+ <div><%= promotion.active ? "Active" : "Inactive"%></div><br>
     <div>
       <%= link_to 'Promotion Detail', promotion %><br>
       <%= link_to 'Edit', edit_promotion_path(promotion) %><br>

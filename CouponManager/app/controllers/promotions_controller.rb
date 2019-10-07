@@ -1,4 +1,7 @@
 class PromotionsController < ApplicationController
+  skip_before_action :authenticate_user!, only: [:evaluate]
+  before_action :is_admin? , only: [:new, :create, :destroy, :index, :show]
+
   def new
     logger.info "new promotion"
     logger.info ENV['GMAIL_USERNAME']
@@ -34,7 +37,7 @@ class PromotionsController < ApplicationController
 
   def destroy
     @promotion = Promotion.find(promotion_id)
-    if @promotion.destroy
+    if @promotion.update(active: false)
       redirect_to promotions_path
     end
   end
