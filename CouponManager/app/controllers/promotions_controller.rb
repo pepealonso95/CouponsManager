@@ -18,14 +18,9 @@ class PromotionsController < ApplicationController
 
 
   def report 
-   if(params.has_key?('promotion_id')) 
      @promotion = Promotion.where(promotion_id: params['promotion_id']).first
      @average = (@promotion.total_respone_time / @promotion.total_requests)
      @rate = (@promotion.positive_response / @promotion.negativew_response)
-     
-   else
-     flash['alert'] = "Error Report"
-   end
   end   
 
 
@@ -59,10 +54,19 @@ class PromotionsController < ApplicationController
 
 
   def evaluate
+    start_time = Time.now
     @promotion = Promotion.find(promotion_id)
     require 'json'
     condition = JSON.parse(@promotion.condition)
     @result = Condition.getResult(condition,total,quantity_product_size)
+    total_time = Time.now - start_time
+    @promotion.update_attributes(:total_respone_time => @promotion.total_respone_time + (total_time * 1000))
+    @promotion.update_attributes(:total_requests => @promotion.total_requests + 1)
+    if @result
+      @promotion.update_attributes(:positive_response => @promotion.positive_response + 1)
+    else
+      @promotion.update_attributes(:negative_response => @promotion.negative_response + 1)
+
     render :create
   end
 
@@ -134,4 +138,5 @@ class PromotionsController < ApplicationController
   def transaction_id
     params.permit(:transaction_id)
   end
+end
 end
