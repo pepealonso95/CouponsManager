@@ -1,9 +1,11 @@
 
 Rails.application.routes.draw do
   # devise_for :users
-  devise_for :users, controllers: {
+  get 'healthcheck/check'
+  devise_for :user, controllers: {
     registrations: 'users/registrations' 
   }
+
   
 
   devise_scope :user do

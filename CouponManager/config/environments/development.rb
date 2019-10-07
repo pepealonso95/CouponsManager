@@ -61,6 +61,11 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
+  # config.logger = Logger.new("log/#{Rails.env}-logs.log", 'daily')
+
+   Rails.logger = Logger.new(STDOUT)
+   config.logger = ActiveSupport::Logger.new("log/#{Rails.env}-logs.log")
+
 
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
