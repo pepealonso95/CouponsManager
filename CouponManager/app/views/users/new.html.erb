@@ -1,2 +1,7 @@
-<h1>Users#new</h1>
-<p>Find me in app/views/users/new.html.erb</p>
+<div>
+  <h2> Add a new non admin user to this organization </h2>
+  <%= form_tag create_non_admin_path do %>  
+    <input type="text" placeholder="email" name="email"/> 
+    <input name="commit" type="submit" value="Create User"/>
+  <% end %> 
+</div>

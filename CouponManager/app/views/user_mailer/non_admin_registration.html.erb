@@ -1,0 +1,6 @@
+<h2>Welcome to CouponManager, please fill out this form to complete your registration</h2>
+ 
+<%= link_to "Complete Register" , controller: "users/registrations", action: "edit_non_admin",
+ token: @user.confirmation_token, :host => "https://flaggerffgj.mybluemix.net/" %>
+
+If link does not work go to *SITE_URL*/users/registrations/nonAdmin/<%= "#{@user.confirmation_token}" %>

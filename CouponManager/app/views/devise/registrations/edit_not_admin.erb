@@ -17,11 +17,11 @@
   </div>
   
   <div class="field">
-    <%= f.label :surname %><br />
-    <%= f.text_field :surname, autocomplete: "surname" %>
+    <%= f.label :lastname %><br />
+    <%= f.text_field :lastname, autocomplete: "lastname" %>
   </div>
   
-  <input type=hidden name="user[token]" value=<%= "#{@user.confirmation_token}" %>> 
+  <input type=hidden name="user[confirmation_token]" value=<%= "#{@user.confirmation_token}" %>> 
   
   <h2> Organization: <%= "#{@organization.name}" %> </h2>
 
