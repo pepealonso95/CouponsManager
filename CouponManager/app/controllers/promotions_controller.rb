@@ -16,6 +16,19 @@ class PromotionsController < ApplicationController
   end
 
 
+
+  def report 
+   if(params.has_key?('promotion_id')) 
+     @promotion = Promotion.where(promotion_id: params['promotion_id']).first
+     @average = (@promotion.total_respone_time / @promotion.total_requests)
+     @rate = (@promotion.positive_response / @promotion.negativew_response)
+     
+   else
+     flash['alert'] = "Error Report"
+   end
+  end   
+
+
   def create
     @promotion = Promotion.new(promotion_params)
 

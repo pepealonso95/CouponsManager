@@ -42,6 +42,10 @@ ActiveRecord::Schema.define(version: 2019_10_08_215823) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "condition"
+    t.integer "total_requests"
+    t.integer "total_response_time"
+    t.integer "positive_response"
+    t.integer "negative_response"
     t.bigint "organization_id", null: false
     t.index ["organization_id"], name: "index_promotions_on_organization_id"
   end
