@@ -8,11 +8,6 @@ class PromotionsController < ApplicationController
   end
 
   def create
-
-  end
-
-  def create
-    @organization = Organization.find(1);
     @promotion = Promotion.new(promotion_params)
 
     if @promotion.save
@@ -34,6 +29,10 @@ class PromotionsController < ApplicationController
   end
 
   def destroy
+    @promotion = Promotion.find(promotion_id)
+    if @promotion.destroy
+      redirect_to promotions_path
+    end
   end
 
 
@@ -41,7 +40,7 @@ class PromotionsController < ApplicationController
     @promotion = Promotion.find(promotion_id)
     require 'json'
     condition = JSON.parse(@promotion.condition)
-    @result = Condition.getResult(condition,total,quantity,product_size)
+    @result = Condition.getResult(condition,total,quantity_product_size)
     render :create
   end
 
@@ -53,20 +52,16 @@ class PromotionsController < ApplicationController
   #   render :create
   # end
 
-  def newCondition
-    
-  end
-
   def index
     @promotions = Promotion.all
   end
 
   def promotion_params
-    params.require(:promotion).permit(:name, :cupon_code, :condition)
+    params.require(:promotion).permit(:name, :cupon_code, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
   end
 
   def edit_promotion_params
-    params.require(:promotion).permit(:name, :cupon_code, :condition)
+    params.require(:promotion).permit(:name, :cupon_code, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
   end
 
   def promotion_id
@@ -77,12 +72,8 @@ class PromotionsController < ApplicationController
     params.require(:total).to_i
   end
 
-  def quantity
-    params.permit(:quantity)['quantity'].to_i
-  end
-
-  def product_size
-    params.permit(:product_size)['product_size'].to_i
+  def quantity_product_size
+    params.permit(:quantity_product_size)['quantity_product_size'].to_i
   end
 
   def cupon_code

@@ -1,15 +1,17 @@
 var Counter = 0;
 var ConditionObject = {};
 $( document ).ready(function() {
-    ConditionObject = {};
+     if($('#promotion_condition').val()!=""){
+        id = Counter;
+        ConditionObject = $('#promotion_condition').val();
+        setConditionChange(id, ConditionObject);
+    }
 
     $("form").submit(function (e) { 
         $('#promotion_condition').val(JSON.stringify(ConditionObject));
-        var promo = $('#promotion_condition').val();
         return true;
         
     });
-    $('#promotion_condition').val(JSON.stringify(ConditionObject));
     getPrimitiveCondition($('#condition-element0'), ConditionObject);
     $('.select-condition-type').change(function(){
         var id = $(this).attr('id').replace("select-condition-type", "");;
@@ -25,6 +27,69 @@ $( document ).ready(function() {
      });
 
 });
+
+setConditionChange = function (id, cond){
+    $('#select-condition-type'+id).change(function(){
+        var id = $(this).attr('id').replace("select-condition-type", "");
+        var value = cond["is_primitive"];
+        if(value==true){
+            setPrimitiveCondition(id, cond);
+        }else{
+            setNestedCondition(id, cond);
+        }
+    });
+}
+
+setPrimitiveCondition = function(id, cond){
+    var nextId = Counter++;
+    cond.is_primitive = true;
+    cond.attribute = cond["attribute"];
+    cond.comparator = cond["comparator"];
+    cond.value =  cond["value"];
+
+var myvar = `<div id="primitive-condition${nextId}" class="primitive-condition">`+
+`    <select id="expresion-parameter${nextId}" class="expresion-parameter">`+
+'    <option value="TOTAL">Total</option>'+
+'    <option value="QUANTITY_PRODUCT_SIZE">Quantity / Product Size</option>'+
+'    </select>'+
+`    <select id="comparator${nextId}" class="comparator">`+
+'    <option value="GREAT">></option>'+
+'    <option value="GREAT_EQ">>=</option>'+
+'    <option value="EQUALS">=</option>'+
+'    <option value="NOT_EQUALS">=/</option>'+
+'    <option value="LESS_EQ"><=</option>'+
+'    <option value="LESS"><</option>'+
+'    </select>'+
+`    <input id="compare-value${nextId}" class="compare-value" type="number" name="compare-value" min="0" value="0">`+
+'</div>';
+object.html(myvar);
+$(`#expresion-parameter${nextId}`).val(cond.attribute);
+$(`#comparator${nextId}`).val(cond.comparator);
+$(`#compare-value${nextId}`).val(cond.value);
+onParameterChange(nextId, cond);
+onComparatorChange(nextId, cond);
+onValueChange(nextId, cond);
+}
+
+setNestedCondition = function(id, cond){
+    var nextId = Counter++;
+    cond.is_primitive = false;
+    cond.operator = cond["operator"];
+    cond.condition1 = cond["condition1"];
+    cond.condition2 = cond["condition2"];
+    var myvar = `<div id="nested-condition${nextId}" class="nested-condition">`+
+    `    <div id="sub-conditionA${nextId}" class="sub-conditionA"></div>`+
+    `    <select id="operator${nextId}" class="operator">`+
+    '        <option value="AND">AND</option>'+
+    '        <option value="OR">OR</option>'+
+    '    </select><br>'+
+    `    <div id="sub-conditionB${nextId}" class="sub-conditionB"></div>`+
+    '</div>';
+    object.html(myvar);
+    setNewCondition(nextId++, cond.condition1);
+    setNewCondition(nextId++, cond.condition2);
+    onOperatorChange(nextId, cond);
+}
 
 makeConditionChange = function (id, cond){
     getPrimitiveCondition($('#condition-element'+id), cond);
@@ -83,6 +148,20 @@ var myvar = '<div class="condition">'+
     makeConditionChange(nextId, cond);
 }
 
+setNewCondition = function (id, cond){
+    var nextId = Counter++;
+var myvar = '<div class="condition">'+
+`    <select id="select-condition-type${nextId}" class="select-condition-type">`+
+'    <option value="primitive">Condicion</option>'+
+'    <option value="non-primitive">Subcondiciones</option>'+
+'    </select><br>'+
+`    <div id="condition-element${nextId}" class="selected-condition"></div>`+
+'    </div>'+
+'</div>';
+    object.html(myvar);
+    setConditionChange(nextId, cond);
+}
+
 getPrimitiveCondition = function(object, cond){
     var nextId = Counter++;
     cond.is_primitive = true;
@@ -93,8 +172,7 @@ getPrimitiveCondition = function(object, cond){
 var myvar = `<div id="primitive-condition${nextId}" class="primitive-condition">`+
 `    <select id="expresion-parameter${nextId}" class="expresion-parameter">`+
 '    <option value="TOTAL">Total</option>'+
-'    <option value="PRODUCT_SIZE">Product Size</option>'+
-'    <option value="QUANTITY">Quantity</option>'+
+'    <option value="QUANTITY_PRODUCT_SIZE">Quantity / Product Size</option>'+
 '    </select>'+
 `    <select id="comparator${nextId}" class="comparator">`+
 '    <option value="GREAT">></option>'+
@@ -130,7 +208,7 @@ getNestedCondition = function(object, cond){
     getNewCondition($(`#sub-conditionA${nextId}`), cond.condition1);
     getNewCondition($(`#sub-conditionB${nextId}`), cond.condition2);
     onOperatorChange(nextId, cond);
-    }
+}
 
 saveCondition = function(){
     $('#promotion_condition').val(JSON.stringify(ConditionObject));

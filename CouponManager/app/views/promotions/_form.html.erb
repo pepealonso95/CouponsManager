@@ -21,9 +21,41 @@ result
   <br/>
   <%= form.label :cupon_code %>
   <br/>
-  <%= form.text_field :cupon_code %>
+  <%= form.number_field :cupon_code %>
   <%= promotion.errors[:cupon_code].join(', ') %>
   <br/>
+  <br/>
+  <%= form.label :type %>
+  <br/>
+  <select name="promotion[promotion_type]" id="promotion_promotion_type">
+    <option value="0" selected="selected">Discount</option>
+    <option value="1">Coupon</option>
+  </select>
+  <br/>
+  <br/>
+  <%= form.label :return_value %>
+  <br/>
+  <%= form.number_field :return_value %>
+  <%= promotion.errors[:return_value].join(', ') %>
+  <br/>
+  <br/>
+  <%= form.label :is_percentage %>
+  <br/>
+  <select name="promotion[is_percentage]" id="promotion_is_percentage">
+    <option value="true" selected="selected">Percentage</option>
+    <option value="false">Fixed Amount</option>
+  </select>
+  <br/>
+  <br/>
+  <%= form.label :active %>
+  <br/>
+  <select name="promotion[active]" id="promotion_active">
+    <option value="true" selected="selected">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+  <br/>
+  <br/>
+  <%= form.label :condition %>
   <br/>
   <div id="condition0" class="condition">
     <select id="select-condition-type0" class="select-condition-type">
@@ -34,9 +66,10 @@ result
     </div>
   </div>
   <br/>
-  <%= form.text_field :condition %>
-  <%# <br/>
-  <a id="add-condition" onclick="saveCondition()">Save Condition</a> %>
+  <%= form.text_field :condition ,:readonly => true%>
+
+  <br/>
+  <%= form.text_field :organization_id, :value => current_user.organization_id ,:readonly => true %>
   <br/>
   <%= form.submit 'Submit', class: 'submit' %>
 <% end %>
