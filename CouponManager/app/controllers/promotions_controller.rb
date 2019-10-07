@@ -1,14 +1,16 @@
 class PromotionsController < ApplicationController
   def new
+    logger.info "new promotion"
+    logger.info ENV['GMAIL_USERNAME']
     @promotion = Promotion.new
   end
 
   def show
+    logger.info "new promotion shown"
     @promotion = Promotion.find(promotion_id)
   end
 
   def create
-
   end
 
   def create
