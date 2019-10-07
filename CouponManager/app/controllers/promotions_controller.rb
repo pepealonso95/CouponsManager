@@ -37,7 +37,7 @@ class PromotionsController < ApplicationController
 
   def destroy
     @promotion = Promotion.find(promotion_id)
-    if @promotion.destroy
+    if @promotion.update(active: false)
       redirect_to promotions_path
     end
   end

@@ -9,10 +9,10 @@ class ApplicationController < ActionController::Base
     end
 
     def is_admin?
-      redirect_to root_path unless current_user.role==0
+      redirect_to "" unless current_user.role==0
     end
     
     def is_logged_out?
-      redirect_to root_path unless !user_signed_in?
+      redirect_to "" unless !user_signed_in?
     end
 end
