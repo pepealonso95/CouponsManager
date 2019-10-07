@@ -1,4 +1,7 @@
 class PromotionsController < ApplicationController
+  skip_before_action :authenticate_user!, only: [:evaluate]
+  before_action :is_admin? , only: [:new, :create, :destroy, :index, :show]
+
   def new
     logger.info "new promotion"
     logger.info ENV['GMAIL_USERNAME']

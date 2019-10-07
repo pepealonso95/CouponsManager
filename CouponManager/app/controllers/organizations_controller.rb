@@ -1,4 +1,7 @@
 class OrganizationsController < ApplicationController
+  include EventEmitter
+  before_action current_user.admin?
+
   def new
     @organization = Organization.new
   end
