@@ -1,0 +1,23 @@
+
+ <%= csrf_meta_tags %>
+ <% javascript_include_tag 'generate-tokens' %>
+
+<h1>Listado de promotions</h1>
+<ul>
+<% @promotions.each do |promotion| %>
+ <div><%= promotion.name %></div><br>
+ <div><%= promotion.id %></div><br>
+ <div><%= promotion.cupon_code %></div><br>
+ <div class="plus-btn unselected" id="<%=promotion.id %>">+</div><br>
+    
+    <hr>
+    <br>
+<% end %>
+
+<%# <%= form_with(model: promotion, local: true) do |form| %> %>
+<%= form_with(url: "/promotions/getCode", method: "post") do |form| %>
+
+  <%= form.text_field 'promotions' %>
+  <%= form.submit 'Submit', class: 'submit' %>
+
+<% end %>

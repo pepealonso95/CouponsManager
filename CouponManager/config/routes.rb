@@ -16,6 +16,10 @@ Rails.application.routes.draw do
     get '/users/sign_out' => 'devise/sessions#destroy' 
   end 
 
+  get "promotions/authorizationCodes" => "promotions#authorizationCodes"
+  post "promotions/getCode" => "promotions#getCode"
+
+  get "promotions/getCode" => "promotions#viewCode"
 
 
   get "promotions/testPromotion" => "promotions#testPromotion"

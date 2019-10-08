@@ -1,3 +1,4 @@
+require 'jwt'
 class PromotionsController < ApplicationController
   skip_before_action :authenticate_user!, only: [:evaluate]
   before_action :is_admin? , only: [:new, :create, :destroy, :index, :show]
@@ -49,6 +50,29 @@ class PromotionsController < ApplicationController
     condition = JSON.parse(@promotion.condition)
     @result = Condition.getResult(condition,total,quantity_product_size)
     render :create
+  end
+
+
+  def authorizationCodes
+    @promotions = Promotion.all
+  
+    render :authorizationCodes
+  end
+
+  def getCode
+    promotionIds = params[:promotionIds]
+    payload = { promotionIds: promotionIds }
+    # IMPORTANT: set nil as password parameter
+    token = JWT.encode payload, nil, 'none'
+    redirect_to controller: 'promotions', id: token, action: 'viewCode'
+
+
+    # render json: { status: token}, status: :ok
+  end
+
+  def viewCode
+    @token = params[:id]
+    render :viewCode
   end
 
 
