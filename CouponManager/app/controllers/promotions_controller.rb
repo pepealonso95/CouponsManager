@@ -1,3 +1,4 @@
+require 'jwt'
 class PromotionsController < ApplicationController
   def new
     logger.info "new promotion"
@@ -45,6 +46,29 @@ class PromotionsController < ApplicationController
     condition = JSON.parse(@promotion.condition)
     @result = Condition.getResult(condition,total,quantity,product_size)
     render :create
+  end
+
+
+  def authorizationCodes
+    @promotions = Promotion.all
+  
+    render :authorizationCodes
+  end
+
+  def getCode
+    promotionIds = params[:promotionIds]
+    payload = { promotionIds: promotionIds }
+    # IMPORTANT: set nil as password parameter
+    token = JWT.encode payload, nil, 'none'
+    redirect_to controller: 'promotions', id: token, action: 'viewCode'
+
+
+    # render json: { status: token}, status: :ok
+  end
+
+  def viewCode
+    @token = params[:id]
+    render :viewCode
   end
 
 
