@@ -18,7 +18,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   def create_non_admin
-    non_admin = User.new(name: "default_name", lastname: "default_lastname", password: "default_password", email: params[:email], organization_id: current_user.organization_id, role: 0)
+    non_admin = User.new(name: "default_name", lastname: "default_lastname", password: "default_password", email: params[:email], organization_id: current_user.organization_id, role: 1)
     non_admin.confirmation_token = SecureRandom.urlsafe_base64
     if non_admin.save
       UserMailer.non_admin_registration(non_admin).deliver
