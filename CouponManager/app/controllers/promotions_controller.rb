@@ -1,6 +1,7 @@
 require 'jwt'
 class PromotionsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:evaluate]
+  skip_before_action :verify_authenticity_token, only: [:testToken]
+  skip_before_action :authenticate_user!, only: [:evaluate, :testToken]
   before_action :is_admin? , only: [:new, :create, :destroy, :index, :show]
 
   def new
@@ -60,14 +61,20 @@ class PromotionsController < ApplicationController
   end
 
   def getCode
-    promotionIds = params[:promotionIds]
-    payload = { promotionIds: promotionIds }
+    promotionIds = params[:promotions]
+    payload = { promotions: promotionIds }
     # IMPORTANT: set nil as password parameter
     token = JWT.encode payload, nil, 'none'
     redirect_to controller: 'promotions', id: token, action: 'viewCode'
 
 
     # render json: { status: token}, status: :ok
+  end
+
+  def testToken
+    token = request.headers["token"]
+    payload = JWT.decode token, nil, false
+    render json: { status: payload }, status: :ok
   end
 
   def viewCode

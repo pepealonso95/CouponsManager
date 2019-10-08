@@ -14,7 +14,7 @@
     <br>
 <% end %>
 
-<%# <%= form_with(model: promotion, local: true) do |form| %> %>
+<%# <%= form_with(model: promotion, local: true) do |form| %>
 <%= form_with(url: "/promotions/getCode", method: "post") do |form| %>
 
   <%= form.text_field 'promotions' %>

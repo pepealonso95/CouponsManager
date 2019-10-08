@@ -20,6 +20,9 @@ Rails.application.routes.draw do
   post "promotions/getCode" => "promotions#getCode"
 
   get "promotions/getCode" => "promotions#viewCode"
+  post "promotions/testToken" => "promotions#testToken"
+
+  get "promotions/new" => "promotions#new"
 
 
   get "promotions/testPromotion" => "promotions#testPromotion"
