@@ -67,6 +67,8 @@ class PromotionsController < ApplicationController
     else
       @promotion.update_attributes(:negative_response => @promotion.negative_response + 1)
 
+    
+    Rails.cache.write('#{promotion_id}', @promotion.json)  
     render :create
   end
 
