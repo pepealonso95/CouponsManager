@@ -1,5 +1,6 @@
 
 Rails.application.routes.draw do
+  resources :transactions
   # devise_for :users
   get 'healthcheck/check'
   devise_for :user, controllers: {
