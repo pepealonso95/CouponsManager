@@ -18,7 +18,7 @@ Rails.application.configure do
 
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
-    config.cache_store = :redis_cache_store, { url: 'redis://user:seba19nico19pepe19@redis-15438.c8.us-east-1-3.ec2.cloud.redislabs.com:15438/0' }
+    config.cache_store = :redis_cache_store, { url: ENV["REDIS_URL"]  }
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
@@ -72,8 +72,8 @@ Rails.application.configure do
     address: "smtp.gmail.com",
     domain: "gmail.com",
     port: 587,
-    user_name: "arquisoftpract19@gmail.com",
-    password: "seba19nico19pepe19",
+    user_name: ENV["MAIL_USERNAME"],
+    password: ENV["MAIL_PASSWORD"],
     authentication: 'plain',
     enable_starttls_auto: true
   }
