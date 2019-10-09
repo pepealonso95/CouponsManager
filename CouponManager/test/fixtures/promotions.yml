@@ -4,7 +4,7 @@ one:
   name: MyString
   active: false
   cupon_code: 1
-  type: 1
+  organization: one
   return_value: 1
   is_percentage: false
 
@@ -12,6 +12,6 @@ two:
   name: MyString
   active: false
   cupon_code: 1
-  type: 1
+  organization: one
   return_value: 1
   is_percentage: false
