@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_08_224939) do
+ActiveRecord::Schema.define(version: 2019_10_08_215823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,15 +42,27 @@ ActiveRecord::Schema.define(version: 2019_10_08_224939) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "condition"
+    t.integer "total_requests"
+    t.integer "total_response_time"
+    t.integer "positive_response"
+    t.integer "negative_response"
     t.bigint "organization_id", null: false
     t.index ["organization_id"], name: "index_promotions_on_organization_id"
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.bigint "promotion_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "transaction"
+    t.index ["promotion_id"], name: "index_transactions_on_promotion_id"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "lastname"
     t.string "email"
-    t.integer "role"
+    t.integer "role", default: 0
     t.string "password"
     t.string "photo_url"
     t.datetime "created_at", precision: 6, null: false
@@ -68,5 +80,6 @@ ActiveRecord::Schema.define(version: 2019_10_08_224939) do
   add_foreign_key "invitations", "organizations"
   add_foreign_key "invitations", "users"
   add_foreign_key "promotions", "organizations"
+  add_foreign_key "transactions", "promotions"
   add_foreign_key "users", "organizations"
 end

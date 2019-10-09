@@ -1,5 +1,6 @@
 
 Rails.application.routes.draw do
+  resources :transactions
   # devise_for :users
   get 'healthcheck/check'
   devise_for :user, controllers: {
@@ -27,6 +28,7 @@ Rails.application.routes.draw do
 
   get "promotions/testPromotion" => "promotions#testPromotion"
   get "promotions/evaluate" => "promotions#evaluate"
+  get "promotions/report" => "promotions#report"
 
   resources :users
   resources :organizations

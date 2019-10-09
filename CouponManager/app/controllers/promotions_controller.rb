@@ -16,6 +16,25 @@ class PromotionsController < ApplicationController
   end
 
 
+
+  def report 
+     @promotion = Promotion.find(promotion_id)
+     railsReturn = Rails.cache.fetch('#{promotion_id}');
+     hash = JSON.parse(railsReturn)
+     positiveResponse = hash["positive_response"]
+     negativeResponse = hash["negative_response"]
+     totalResponseTime = hash["total_response_time"]
+     totalRequests = hash["total_requests"]
+     @average = (totalResponseTime.to_i / totalRequests.to_i)
+     if negativeResponse.to_i == 0
+        @rate = (positiveResponse.to_i)
+     else
+      @rate = (positiveResponse.to_i / negativeResponse.to_i)
+     end 
+
+  end   
+
+
   def create
     @promotion = Promotion.new(promotion_params)
 
@@ -46,12 +65,46 @@ class PromotionsController < ApplicationController
 
 
   def evaluate
+    start_time = Time.now
     @promotion = Promotion.find(promotion_id)
-    require 'json'
-    condition = JSON.parse(@promotion.condition)
-    @result = Condition.getResult(condition,total,quantity_product_size)
+    valid = false
+    if @promotion.promotion_type==0
+      transaction = Transaction.where(transaction: transaction_id, promotion_id: promotion_id).exists?(conditions = :none)
+      unless transaction
+        valid = true
+      end
+    elsif @promotion.promotion_type==1
+      if @promotion.total_requests==0
+        valid = true
+      end
+    end
+    if valid
+      require 'json'
+      condition = JSON.parse(@promotion.condition)
+      applies = Condition.getResult(condition,total,quantity_product_size)
+      if applies
+        if @promotion.is_percentage
+          @result = total*(@promotion.return_value/100)
+        else
+          @result = @promotion.return_value
+        end
+      else
+        @result = false
+      end
+    else
+      @result = false
+    end
+    total_time = Time.now - start_time
+    @promotion.update_attributes(:total_response_time => @promotion.total_response_time + (total_time * 1000))
+    @promotion.update_attributes(:total_requests => @promotion.total_requests + 1)
+    if @result!=false
+      @promotion.update_attributes(:positive_response => @promotion.positive_response + 1)
+    else
+      @promotion.update_attributes(:negative_response => @promotion.negative_response + 1)
+    end
+    Rails.cache.write('#{promotion_id}', @promotion.to_json) 
     render :create
-  end
+  end   
 
 
   def authorizationCodes
@@ -119,6 +172,6 @@ class PromotionsController < ApplicationController
   end
 
   def transaction_id
-    params.permit(:transaction_id)
+    params.permit(:transaction_id)['transaction_id']
   end
 end
