@@ -31,9 +31,13 @@ Rails.application.routes.draw do
   get "promotions/evaluate" => "promotions#evaluate"
   get "promotions/report" => "promotions#report"
   get "promotions/report_rest" => "promotions#report_rest"
+  get "promotions/filter" => "promotions#filter"
 
   resources :users
   resources :organizations
   resources :promotions
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+
+  root to: "promotions#index"
+
 end

@@ -76,6 +76,7 @@ class PromotionsController < ApplicationController
   def destroy
     @promotion = cached_promotion
     if @promotion.update(active: false)
+      Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
       redirect_to promotions_path
     end
   end
@@ -94,51 +95,55 @@ class PromotionsController < ApplicationController
     if contains
       start_time = Time.now
       @promotion = cached_promotion
-      valid = false
-      if @promotion.promotion_type==0
-        transaction = cached_transaction
-        unless transaction
-          valid = true
-          Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
-        end
-      elsif @promotion.promotion_type==1
-        if @promotion.total_requests==0
-          valid = true
-        end
-      end
-      if valid
-        require 'json'
-        condition = JSON.parse(@promotion.condition)
-        applies = Condition.getResult(condition,total,quantity_product_size)
-        if applies
-          if @promotion.is_percentage
-            @result = total-total*(@promotion.return_value/100)
-            totalSpentAdd = @result
-          else
-            @result = @promotion.return_value
+      if @promotion.active
+        valid = false
+        if @promotion.promotion_type==0
+          transaction = cached_transaction
+          unless transaction
+            valid = true
+            Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
           end
-          positiveAdd = 1
-          if @promotion.promotion_type==0
-            @transaction = Transaction.new(transaction_code: transaction_id, promotion_id: promotion_id)
-            @transaction.save
+        elsif @promotion.promotion_type==1
+          if @promotion.total_requests==0 and @promotion.cupon_code==cupon_code
+            valid = true
+          end
+        end
+        if valid 
+          require 'json'
+          condition = JSON.parse(@promotion.condition)
+          applies = Condition.getResult(condition,total,quantity_product_size)
+          if applies
+            if @promotion.is_percentage
+              @result = total-total*(@promotion.return_value/100)
+              totalSpentAdd = @result
+            else
+              @result = @promotion.return_value
+            end
+            positiveAdd = 1
+            if @promotion.promotion_type==0
+              @transaction = Transaction.new(transaction_code: transaction_id, promotion_id: promotion_id)
+              @transaction.save
+            end
+          else
+            negativeAdd = 1
+            @result = false
           end
         else
           negativeAdd = 1
           @result = false
         end
+        total_time = Time.now - start_time
+        @promotion.update_attributes(total_requests: @promotion.total_requests + 1, 
+          total_response_time: @promotion.total_response_time + (total_time * 1000),
+          positive_response: @promotion.positive_response + positiveAdd.to_i,
+        total_spent: @promotion.total_spent + totalSpentAdd.to_i,
+        negative_response: @promotion.negative_response + negativeAdd.to_i)
+        Rails.cache.delete("promotion-#{promotion_id}")
+        cached_promotion
+        render json: @result, status: :ok
       else
-        negativeAdd = 1
-        @result = false
+        render json: false, status: :ok
       end
-      total_time = Time.now - start_time
-      @promotion.update_attributes(total_requests: @promotion.total_requests + 1, 
-        total_response_time: @promotion.total_response_time + (total_time * 1000),
-        positive_response: @promotion.positive_response + positiveAdd.to_i,
-      total_spent: @promotion.total_spent + totalSpentAdd.to_i,
-      negative_response: @promotion.negative_response + negativeAdd.to_i)
-      Rails.cache.delete("promotion-#{promotion_id}")
-      cached_promotion
-      render json: @result, status: :ok
     else
       render json: "unauthorized", status: :unauthorized
     end
@@ -192,8 +197,21 @@ class PromotionsController < ApplicationController
   # end
 
   def index
-    @promotions = Promotion.all
+    @promotions = Promotion.where(organization_id: current_user.organization_id)
+    if name && name!=""
+      @promotions = @promotions.where(name: name)
+    end
+    if cupon_code && cupon_code!=""
+      @promotions = @promotions.where(cupon_code: cupon_code)
+    end
+    if active && active!=""
+      @promotions = @promotions.where(active: active)
+    end
+    if promotion_type && promotion_type!=""
+      @promotions = @promotions.where(promotion_type: promotion_type)
+    end
   end
+  
 
   def promotion_params
     params.require(:promotion).permit(:name, :cupon_code, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
@@ -216,7 +234,19 @@ class PromotionsController < ApplicationController
   end
 
   def cupon_code
-    params.permit(:cupon_code)
+    params.permit(:cupon_code)['cupon_code']
+  end
+
+  def name
+    params.permit(:name)['name']
+  end
+
+  def active
+    params.permit(:active)['active']
+  end
+
+  def promotion_type
+    params.permit(:promotion_type)['promotion_type']
   end
 
   def transaction_id
