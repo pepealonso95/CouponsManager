@@ -30,8 +30,7 @@ class PromotionsController < ApplicationController
         @rate = (positiveResponse.to_i)
      else
       @rate = (positiveResponse.to_i / negativeResponse.to_i)
-     end 
-
+     end       
   end   
 
 
