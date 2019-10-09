@@ -1,3 +1,22 @@
+
+<%= form_with(url: "/promotions", method: :get, local: true  ) do |form| %>
+  <%= form.label :name %>
+  <%= form.text_field :name, autofocus: true %>
+  <br/>
+  <%= form.label :cupon_code %>
+  <%= form.text_field :cupon_code, autofocus: true %>
+  <br/>
+  <%= form.label :active %>
+  <%= form.text_field :active, autofocus: true %>
+  <br/>
+  <%= form.label :promotion_type %>
+  <%= form.text_field :promotion_type, autofocus: true %>
+  <br/>
+  <%= form.submit 'Submit', class: 'submit' %>
+<% end %>
+
+
+
 <h1>Listado de promotions</h1>
 <ul>
 <% @promotions.each do |promotion| %>
