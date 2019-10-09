@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_08_215823) do
+ActiveRecord::Schema.define(version: 2019_10_09_020148) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,16 +37,17 @@ ActiveRecord::Schema.define(version: 2019_10_08_215823) do
     t.boolean "active"
     t.integer "cupon_code"
     t.integer "promotion_type"
-    t.integer "return_value"
+    t.integer "return_value", default: 0
     t.boolean "is_percentage"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "condition"
-    t.integer "total_requests"
-    t.integer "total_response_time"
-    t.integer "positive_response"
-    t.integer "negative_response"
     t.bigint "organization_id", null: false
+    t.integer "total_requests", default: 0
+    t.integer "total_response_time", default: 0
+    t.integer "positive_response", default: 0
+    t.integer "negative_response", default: 0
+    t.integer "total_spent", default: 0
     t.index ["organization_id"], name: "index_promotions_on_organization_id"
   end
 
@@ -54,7 +55,7 @@ ActiveRecord::Schema.define(version: 2019_10_08_215823) do
     t.bigint "promotion_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "transaction"
+    t.string "transaction_code"
     t.index ["promotion_id"], name: "index_transactions_on_promotion_id"
   end
 

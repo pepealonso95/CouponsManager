@@ -1,7 +1,7 @@
 require 'jwt'
 class PromotionsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:testToken]
-  skip_before_action :authenticate_user!, only: [:evaluate, :testToken]
+  skip_before_action :authenticate_user!, only: [:evaluate, :testToken, :report_rest]
   before_action :is_admin? , only: [:new, :create, :destroy, :index, :show]
 
   def new
@@ -12,28 +12,44 @@ class PromotionsController < ApplicationController
 
   def show
     logger.info "new promotion shown"
-    @promotion = Promotion.find(promotion_id)
+    @promotion = cached_promotion
   end
 
-
+  def cached_promotion
+    Rails.cache.fetch("promotion-#{promotion_id}", :expires_in => 10.minutes) do
+      Promotion.find(promotion_id)
+    end
+  end
 
   def report 
-     @promotion = Promotion.find(promotion_id)
-     railsReturn = Rails.cache.fetch('#{promotion_id}');
-     hash = JSON.parse(railsReturn)
-     positiveResponse = hash["positive_response"]
-     negativeResponse = hash["negative_response"]
-     totalResponseTime = hash["total_response_time"]
-     totalRequests = hash["total_requests"]
-     @average = (totalResponseTime.to_i / totalRequests.to_i)
-     if negativeResponse.to_i == 0
-        @rate = (positiveResponse.to_i)
+     @promotion = cached_promotion
+     @average = (@promotion.total_response_time / @promotion.total_requests)
+     if @promotion.negative_response == 0
+        @rate = (@promotion.positive_response)
      else
-      @rate = (positiveResponse.to_i / negativeResponse.to_i)
+      @rate = "#{@promotion.positive_response}/#{@promotion.negative_response}"
      end 
-
   end   
 
+  def report_rest 
+    token = request.headers["token"]
+    payload = JWT.decode token, nil, false
+    contains  = payload[0]["promotions"].include? "#{promotion_id}"
+    if contains
+      @promotion = cached_promotion
+      @average = (@promotion.total_response_time / @promotion.total_requests)
+      if @promotion.negative_response == 0
+        @rate = (@promotion.positive_response)
+      else
+      @rate = "#{@promotion.positive_response}/#{@promotion.negative_response}"
+      end 
+      render json: {name: @promotion.name, invocations: @promotion.total_requests, positive_rate: @rate, average_time: @average}, status: :ok
+    else
+      render json: "unauthorized", status: :unauthorized
+    end
+    rescue
+      render json: "internal server error", status: :error
+  end   
 
   def create
     @promotion = Promotion.new(promotion_params)
@@ -44,8 +60,9 @@ class PromotionsController < ApplicationController
   end
 
   def update
-    @promotion = Promotion.find(promotion_id)
+    @promotion = cached_promotion
     if @promotion.update(edit_promotion_params)
+      Rails.cache.delete("promotion-#{promotion_id}")
       redirect_to promotions_path
     else
       render :edit
@@ -53,57 +70,80 @@ class PromotionsController < ApplicationController
   end
 
   def edit
-    @promotion = Promotion.find(promotion_id)
+    @promotion = cached_promotion
   end
 
   def destroy
-    @promotion = Promotion.find(promotion_id)
+    @promotion = cached_promotion
     if @promotion.update(active: false)
       redirect_to promotions_path
     end
   end
 
+  def cached_transaction
+    Rails.cache.fetch("transaction-#{transaction_id}-#{promotion_id}", :expires_in => 12.hours) do
+      @promotion.transactions.exists?(transaction_code: transaction_id)
+    end
+  end
+
 
   def evaluate
-    start_time = Time.now
-    @promotion = Promotion.find(promotion_id)
-    valid = false
-    if @promotion.promotion_type==0
-      transaction = Transaction.where(transaction: transaction_id, promotion_id: promotion_id).exists?(conditions = :none)
-      unless transaction
-        valid = true
+    token = request.headers["token"]
+    payload = JWT.decode token, nil, false
+    contains  = payload[0]["promotions"].include? "#{promotion_id}"
+    if contains
+      start_time = Time.now
+      @promotion = cached_promotion
+      valid = false
+      if @promotion.promotion_type==0
+        transaction = cached_transaction
+        unless transaction
+          valid = true
+          Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
+        end
+      elsif @promotion.promotion_type==1
+        if @promotion.total_requests==0
+          valid = true
+        end
       end
-    elsif @promotion.promotion_type==1
-      if @promotion.total_requests==0
-        valid = true
-      end
-    end
-    if valid
-      require 'json'
-      condition = JSON.parse(@promotion.condition)
-      applies = Condition.getResult(condition,total,quantity_product_size)
-      if applies
-        if @promotion.is_percentage
-          @result = total*(@promotion.return_value/100)
+      if valid
+        require 'json'
+        condition = JSON.parse(@promotion.condition)
+        applies = Condition.getResult(condition,total,quantity_product_size)
+        if applies
+          if @promotion.is_percentage
+            @result = total-total*(@promotion.return_value/100)
+            totalSpentAdd = @result
+          else
+            @result = @promotion.return_value
+          end
+          positiveAdd = 1
+          if @promotion.promotion_type==0
+            @transaction = Transaction.new(transaction_code: transaction_id, promotion_id: promotion_id)
+            @transaction.save
+          end
         else
-          @result = @promotion.return_value
+          negativeAdd = 1
+          @result = false
         end
       else
+        negativeAdd = 1
         @result = false
       end
+      total_time = Time.now - start_time
+      @promotion.update_attributes(total_requests: @promotion.total_requests + 1, 
+        total_response_time: @promotion.total_response_time + (total_time * 1000),
+        positive_response: @promotion.positive_response + positiveAdd.to_i,
+      total_spent: @promotion.total_spent + totalSpentAdd.to_i,
+      negative_response: @promotion.negative_response + negativeAdd.to_i)
+      Rails.cache.delete("promotion-#{promotion_id}")
+      cached_promotion
+      render json: @result, status: :ok
     else
-      @result = false
+      render json: "unauthorized", status: :unauthorized
     end
-    total_time = Time.now - start_time
-    @promotion.update_attributes(:total_response_time => @promotion.total_response_time + (total_time * 1000))
-    @promotion.update_attributes(:total_requests => @promotion.total_requests + 1)
-    if @result!=false
-      @promotion.update_attributes(:positive_response => @promotion.positive_response + 1)
-    else
-      @promotion.update_attributes(:negative_response => @promotion.negative_response + 1)
-    end
-    Rails.cache.write('#{promotion_id}', @promotion.to_json) 
-    render :create
+    rescue
+      render json: "internal server error", status: :error
   end   
 
 
@@ -127,7 +167,8 @@ class PromotionsController < ApplicationController
   def testToken
     token = request.headers["token"]
     payload = JWT.decode token, nil, false
-    render json: { status: payload }, status: :ok
+    contains  = payload[0]["promotions"].include? "38"
+    render json: { status: contains }, status: :ok
   end
 
   def viewCode
