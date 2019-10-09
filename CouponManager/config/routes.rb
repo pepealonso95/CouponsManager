@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 
   get "promotions/getCode" => "promotions#viewCode"
   post "promotions/testToken" => "promotions#testToken"
+  get "promotions/viewImage" => "promotions#viewImage"
 
   get "promotions/new" => "promotions#new"
 
@@ -36,4 +37,7 @@ Rails.application.routes.draw do
   resources :organizations
   resources :promotions
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+
+  root to: "promotions#index"
+
 end

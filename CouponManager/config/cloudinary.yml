@@ -1,0 +1,19 @@
+---
+development:
+  cloud_name: dtywux1io
+  api_key: '111327583545321'
+  api_secret: xFppNtL-JW2aL3Si_2jmvhLQXmo
+  enhance_image_tag: true
+  static_file_support: false
+production:
+  cloud_name: dtywux1io
+  api_key: '111327583545321'
+  api_secret: xFppNtL-JW2aL3Si_2jmvhLQXmo
+  enhance_image_tag: true
+  static_file_support: true
+test:
+  cloud_name: dtywux1io
+  api_key: '111327583545321'
+  api_secret: xFppNtL-JW2aL3Si_2jmvhLQXmo
+  enhance_image_tag: true
+  static_file_support: false
