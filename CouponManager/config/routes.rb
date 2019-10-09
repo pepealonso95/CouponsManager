@@ -28,6 +28,7 @@ Rails.application.routes.draw do
 
   get "promotions/testPromotion" => "promotions#testPromotion"
   get "promotions/evaluate" => "promotions#evaluate"
+  get "promotions/report" => "promotions#report"
 
   resources :users
   resources :organizations
