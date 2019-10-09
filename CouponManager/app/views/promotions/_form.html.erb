@@ -1,7 +1,7 @@
 
-<%= javascript_include_tag params[:controller] %>
+ <% javascript_include_tag 'promotions-form' %>
 
-result
+<%# result
 <%= @result.inspect %>
 
 
@@ -69,7 +69,11 @@ result
   <%= form.text_field :condition ,:readonly => true%>
 
   <br/>
+  <br/>
+  <%= form.label :organization_id %>
+  <br/>
   <%= form.text_field :organization_id, :value => current_user.organization_id ,:readonly => true %>
+  <br/>
   <br/>
   <%= form.submit 'Submit', class: 'submit' %>
 <% end %>
