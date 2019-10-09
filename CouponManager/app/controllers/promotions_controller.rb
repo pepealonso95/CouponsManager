@@ -177,6 +177,13 @@ class PromotionsController < ApplicationController
   end
 
 
+
+  def viewImage
+    @user = current_user
+    render :viewImage
+  end
+
+
   # def testPromotion
   #   @promotion = Promotion.find(5)
   #   @result = Condition.new(@promotion.condition)

@@ -74,6 +74,10 @@ ActiveRecord::Schema.define(version: 2019_10_09_020148) do
     t.datetime "remember_created_at"
     t.bigint "organization_id", null: false
     t.string "confirmation_token"
+    t.string "avatar_file_name"
+    t.string "avatar_content_type"
+    t.integer "avatar_file_size"
+    t.datetime "avatar_updated_at"
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
