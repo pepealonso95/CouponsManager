@@ -7,12 +7,20 @@
   <%= form.text_field :cupon_code, autofocus: true %>
   <br/>
   <%= form.label :active %>
-  <%= form.text_field :active, autofocus: true %>
+  <select name="active" id="active">
+    <option value="" selected="selected">Any</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
   <br/>
   <%= form.label :promotion_type %>
-  <%= form.text_field :promotion_type, autofocus: true %>
+  <select name="promotion_type" id="promotion_type">
+    <option value="" selected="selected">Any</option>
+    <option value="0" >Discount</option>
+    <option value="1">Coupon</option>
+  </select>
   <br/>
-  <%= form.submit 'Submit', class: 'submit' %>
+  <%= form.submit 'Submit', class: 'submit btn btn-primary' %>
 <% end %>
 
 
