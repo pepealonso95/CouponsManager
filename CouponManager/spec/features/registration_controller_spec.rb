@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Register users' do
+RSpec.describe 'Register users', type: :feature do
 
     before(:all) do
         # @organization = create(:organization)
@@ -12,12 +12,12 @@ RSpec.describe 'Register users' do
 it 'Sign up successfully' do
     visit('users/sign_up')
     expect(page).to have_content('Sign up')
-    fill_in 'email', :with => "seba@gmail.com"
-    fill_in 'password', :with => "123456"
+    fill_in 'Email', :with => "seba@gmail.com"
+    fill_in 'Password', :with => "123456"
     fill_in 'password_confirmation', :with => "123456"
-    fill_in 'name', :with => "Sebastian"
-    fill_in 'lastname', :with => "Rodriguez"
-    fill_in 'organization_id', :with => "Organizacion"
+    fill_in 'Name', :with => "Sebastian"
+    fill_in 'Lastname', :with => "Rodriguez"
+    fill_in 'Organization_id', :with => "Organizacion"
     click_button 'Sign up'
     expect(current_path).to eql('/')
     expect(page).to have_content('Logged in')
