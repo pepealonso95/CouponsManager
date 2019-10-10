@@ -2,16 +2,15 @@
  <%= csrf_meta_tags %>
  <% javascript_include_tag 'generate-tokens' %>
 
-<h1>Listado de promotions</h1>
-<ul>
+<h2>Generate Key</h2>
+<ul class="list-group">
 <% @promotions.each do |promotion| %>
- <div><%= promotion.name %></div><br>
- <div><%= promotion.id %></div><br>
- <div><%= promotion.cupon_code %></div><br>
- <div class="plus-btn unselected" id="<%=promotion.id %>">+</div><br>
-    
-    <hr>
-    <br>
+<div class="list-group-item">
+ <h5>Name: <%= promotion.name %></h5>
+ <h5>Code: <%= promotion.cupon_code %></h5>
+ <h5>Type: <%= promotion.promotion_type==0 ? "Discount" : "Coupon"%></h5>
+ <button type="button" class="btn btn-primary plus-btn unselected" id="<%=promotion.id %>">+</button>
+</div>
 <% end %>
 
 <%# <%= form_with(model: promotion, local: true) do |form| %>

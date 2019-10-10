@@ -24,22 +24,21 @@
 
 
 
-<h1>Listado de promotions</h1>
-<ul>
+<h1>Promotions</h1>
+<ul  class="list-group">
 <% @promotions.each do |promotion| %>
- <div>Code: <%= promotion.cupon_code %></div><br>
- <div>Name: <%= promotion.name %></div><br>
- <div>Type: <%= promotion.promotion_type==0 ? "Discount" : "Coupon"%></div><br>
- <div><%= promotion.active ? "Active" : "Inactive"%></div><br>
-    <div>
-      <%= link_to 'Promotion Detail', promotion %><br>
-      <%= link_to 'Report', controller: :promotions, action: :report, :id => promotion.id  %><br>
+<li class="list-group-item">
+ <h4>Name: <%= promotion.name %></h4><br>
+ <h4>Code: <%= promotion.cupon_code %></h4><br>
+ <h4>Type: <%= promotion.promotion_type==0 ? "Discount" : "Coupon"%></h4><br>
+ <h4><%= promotion.active ? "Active" : "Inactive"%></h4><br>
+      <%= link_to 'Details', promotion,:class => "btn btn-primary" %>
+      <%= link_to 'Report', controller: :promotions, action: :report, :id => promotion.id , :class => "btn btn-primary"%>
       <% if :check_admin %>
-      <%= link_to 'Edit', edit_promotion_path(promotion), method: "get" %><br>
-      <%= link_to 'Destroy', promotion,  method: :delete, data: { confirm: 'Are you sure?' } %>
+     <%= link_to 'Edit', edit_promotion_path(promotion), method: "get",:class => "btn btn-warning" %>
+     <%= link_to 'Destroy', promotion,  method: :delete, data: { confirm: 'Are you sure?' },:class => "btn btn-danger" %>
       <% end %>
-    </div>
-    <hr>
     <br>
+    </li>
 <% end %>
 </ul>

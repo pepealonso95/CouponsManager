@@ -1,6 +1,6 @@
 <h1>Listado de usuarios</h1>
-<ul>
+<ul class="list-group">
 <% @users.each do |u| %>
-<li><%= u.name %>, <%= u.email %></li>
+<li class="list-group-item">Name: <%= u.name %>, Email: <%= u.email %></li>
 <% end %>
 </ul>

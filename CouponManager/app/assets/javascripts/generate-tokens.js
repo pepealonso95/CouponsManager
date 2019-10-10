@@ -14,14 +14,14 @@ $( document ).ready(function() {
                 if (index > -1) {
                     PromotionIds.splice(index, 1);
                 }
-                $(this).removeClass('selected');
-                $(this).addClass('unselected');
+                $(this).removeClass('selected btn-success');
+                $(this).addClass('unselected btn-primary');
                 $(this).html('+');
             }else{
                 PromotionIds.push(id);
-                $(this).removeClass('unselected');
-                $(this).addClass('selected');
-                $(this).html('-');
+                $(this).removeClass('unselected btn-primary');
+                $(this).addClass('selected btn-success');
+                $(this).html('✔');
             }
         })
     }
