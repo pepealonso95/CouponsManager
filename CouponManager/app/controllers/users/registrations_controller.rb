@@ -2,6 +2,7 @@
 
 class Users::RegistrationsController < Devise::RegistrationsController
   before_action :configure_sign_up_params, only: [:create]
+  skip_before_action :authenticate_user!, only: [:create_non_admin, :edit_non_admin, :complete_non_admin_registration]
   # before_action :is_logged_out? , only: [:edit_non_admin, :complete_non_admin_registration]
   # before_action :authenticate_user! , only: [:create_non_admin]
   # before_action :is_admin?, only: [:create_non_admin]
