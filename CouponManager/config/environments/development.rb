@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -12,16 +14,15 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
-
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
 
-    config.action_controller.perform_caching = true
-    config.action_controller.enable_fragment_cache_logging = true
-    config.cache_store = :redis_cache_store, { url: ENV["REDIS_URL"]  }
-    config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
-    }
+  config.action_controller.perform_caching = true
+  config.action_controller.enable_fragment_cache_logging = true
+  config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] }
+  config.public_file_server.headers = {
+    'Cache-Control' => "public, max-age=#{2.days.to_i}"
+  }
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
@@ -46,7 +47,7 @@ Rails.application.configure do
   config.assets.debug = true
 
   # Suppress logger output for asset requests.
- # config.assets.quiet = true
+  # config.assets.quiet = true
 
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
@@ -55,27 +56,26 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-    # config.logger = Logger.new("log/#{Rails.env}-logs.log", 'daily')
+  # config.logger = Logger.new("log/#{Rails.env}-logs.log", 'daily')
 
-    Rails.logger = Logger.new(STDOUT)
-    config.logger = ActiveSupport::Logger.new("log/#{Rails.env}-logs.log")
+  Rails.logger = Logger.new(STDOUT)
+  config.logger = ActiveSupport::Logger.new("log/#{Rails.env}-logs.log")
 
-    
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  Paperclip.options[:image_magick_path] = "/opt/ImageMagick/bin"
-Paperclip.options[:command_path] = "/opt/ImageMagick/bin"
+  Paperclip.options[:image_magick_path] = '/opt/ImageMagick/bin'
+  Paperclip.options[:command_path] = '/opt/ImageMagick/bin'
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default :charset => "utf-8"
+  config.action_mailer.default charset: 'utf-8'
 
   config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
-    domain: "gmail.com",
+    address: 'smtp.gmail.com',
+    domain: 'gmail.com',
     port: 587,
-    user_name: ENV["MAIL_USERNAME"],
-    password: ENV["MAIL_PASSWORD"],
+    user_name: ENV['MAIL_USERNAME'],
+    password: ENV['MAIL_PASSWORD'],
     authentication: 'plain',
     enable_starttls_auto: true
   }

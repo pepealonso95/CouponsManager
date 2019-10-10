@@ -1,4 +1,6 @@
+# frozen_string_literal: true
+
 class Organization < ApplicationRecord
-    has_many :users
-    has_many :promotions
+  has_many :users
+  has_many :promotions
 end

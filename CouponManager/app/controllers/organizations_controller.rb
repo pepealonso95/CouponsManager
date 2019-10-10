@@ -1,12 +1,13 @@
+# frozen_string_literal: true
+
 class OrganizationsController < ApplicationController
   # include EventEmitter
-  before_action :is_admin?, only: [:new, :create, :update, :edit, :destroy, :index]
+  before_action :is_admin?, only: %i[new create update edit destroy index]
 
   def new
     @organization = Organization.new
   end
 
-  
   def create
     @organization = Organization.new(organization_params)
     if @organization.save
@@ -31,15 +32,12 @@ class OrganizationsController < ApplicationController
 
   def destroy
     @organization = Organization.find(id_param)
-    if @organization.destroy
-      redirect_to organizations_path
-    end
+    redirect_to organizations_path if @organization.destroy
   end
 
   def index
     @organizations = Organization.all
   end
-
 
   def show
     @organization = Organization.find(id_param)
@@ -58,5 +56,4 @@ class OrganizationsController < ApplicationController
   def id_param
     params.require(:id)
   end
-
 end
