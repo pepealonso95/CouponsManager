@@ -3,8 +3,8 @@
 require 'jwt'
 class PromotionsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:testToken]
-  skip_before_action :authenticate_user!, only: %i[evaluate testToken report_rest]
-  before_action :is_admin?, only: %i[new create destroy]
+  skip_before_action :authenticate_user!, only: [:evaluate, :testToken, :report_rest]
+  before_action :is_admin? , only: [:new, :create, :destroy, :edit, :update, :authorizationCodes, :getCode]
 
   def new
     logger.info 'new promotion'
@@ -144,7 +144,6 @@ class PromotionsController < ApplicationController
 
   def authorizationCodes
     @promotions = Promotion.all
-
     render :authorizationCodes
   end
 

@@ -33,23 +33,23 @@ ActiveRecord::Schema.define(version: 20_191_009_025_847) do
     t.datetime 'updated_at', precision: 6, null: false
   end
 
-  create_table 'promotions', force: :cascade do |t|
-    t.string 'name'
-    t.boolean 'active'
-    t.integer 'cupon_code'
-    t.integer 'promotion_type'
-    t.integer 'return_value', default: 0
-    t.boolean 'is_percentage'
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-    t.string 'condition'
-    t.integer 'total_requests', default: 0
-    t.integer 'total_response_time', default: 0
-    t.integer 'positive_response', default: 0
-    t.integer 'negative_response', default: 0
-    t.bigint 'organization_id', null: false
-    t.integer 'total_spent', default: 0
-    t.index ['organization_id'], name: 'index_promotions_on_organization_id'
+  create_table "promotions", force: :cascade do |t|
+    t.string "name"
+    t.boolean "active"
+    t.integer "cupon_code"
+    t.integer "promotion_type"
+    t.integer "return_value", default: 0
+    t.boolean "is_percentage"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "condition"
+    t.bigint "organization_id", null: false
+    t.integer "total_requests", default: 0
+    t.integer "total_response_time", default: 0
+    t.integer "positive_response", default: 0
+    t.integer "negative_response", default: 0
+    t.integer "total_spent", default: 0
+    t.index ["organization_id"], name: "index_promotions_on_organization_id"
   end
 
   create_table 'transactions', force: :cascade do |t|

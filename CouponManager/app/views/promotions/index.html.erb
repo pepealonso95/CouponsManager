@@ -33,8 +33,11 @@
  <div><%= promotion.active ? "Active" : "Inactive"%></div><br>
     <div>
       <%= link_to 'Promotion Detail', promotion %><br>
+      <%= link_to 'Report', controller: :promotions, action: :report, :id => promotion.id  %><br>
+      <% if :check_admin %>
       <%= link_to 'Edit', edit_promotion_path(promotion), method: "get" %><br>
       <%= link_to 'Destroy', promotion,  method: :delete, data: { confirm: 'Are you sure?' } %>
+      <% end %>
     </div>
     <hr>
     <br>
