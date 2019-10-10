@@ -25,7 +25,7 @@ class PromotionsController < ApplicationController
 
   def report
     @promotion = cached_promotion
-    @average = (@promotion.total_response_time / @promotion.total_requests)
+    @average = @promotion.total_requests!=0 ? (@promotion.total_response_time / @promotion.total_requests) : 0
     @rate = "#{@promotion.positive_response}/#{@promotion.negative_response}"
   end
 
@@ -35,7 +35,7 @@ class PromotionsController < ApplicationController
     contains = payload[0]['promotions'].include? promotion_id.to_s
     if contains
       @promotion = cached_promotion
-      @average = (@promotion.total_response_time / @promotion.total_requests)
+      @average = @promotion.total_requests!=0 ? (@promotion.total_response_time / @promotion.total_requests) : 0
       @rate = "#{@promotion.positive_response}/#{@promotion.negative_response}"
       render json: { name: @promotion.name, invocations: @promotion.total_requests, positive_rate: @rate, average_time: @average }, status: :ok
     else
