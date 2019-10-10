@@ -2,7 +2,7 @@ require 'jwt'
 class PromotionsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:testToken]
   skip_before_action :authenticate_user!, only: [:evaluate, :testToken, :report_rest]
-  before_action :is_admin? , only: [:new, :create, :destroy]
+  before_action :is_admin? , only: [:new, :create, :destroy, :edit, :update, :authorizationCodes, :getCode]
 
   def new
     logger.info "new promotion"
@@ -23,7 +23,10 @@ class PromotionsController < ApplicationController
 
   def report 
      @promotion = cached_promotion
-     @average = (@promotion.total_response_time / @promotion.total_requests)
+     @average = 0
+     if @promotion.total_requests != 0
+        @average = (@promotion.total_response_time / @promotion.total_requests)
+     end
      if @promotion.negative_response == 0
         @rate = (@promotion.positive_response)
      else
@@ -37,7 +40,10 @@ class PromotionsController < ApplicationController
     contains  = payload[0]["promotions"].include? "#{promotion_id}"
     if contains
       @promotion = cached_promotion
-      @average = (@promotion.total_response_time / @promotion.total_requests)
+      @average = 0
+      if @promotion.total_requests != 0
+          @average = (@promotion.total_response_time / @promotion.total_requests)
+      end
       if @promotion.negative_response == 0
         @rate = (@promotion.positive_response)
       else
@@ -154,7 +160,6 @@ class PromotionsController < ApplicationController
 
   def authorizationCodes
     @promotions = Promotion.all
-  
     render :authorizationCodes
   end
 

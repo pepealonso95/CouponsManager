@@ -15,4 +15,8 @@ class ApplicationController < ActionController::Base
     def is_logged_out?
       redirect_to "" unless !user_signed_in?
     end
+
+    def check_admin
+      current_user.role==0
+    end
 end
