@@ -21,8 +21,8 @@
             <li><%= link_to "Mail Invite",  controller: :users, action: :new %></li>
          </ul>
        </li>
-       <li><%= link_to "New Promotion",  controller: :promotions, action: :new %></li>
-       <li><%= link_to "New Key",  controller: :promotions, action: :authorizationCodes %></li>
+       <li><%= link_to "New Promotion",  new_promotion_path, method: :get%></li>
+       <li><a data-method="get" href="/promotions/authorizationCodes">New Key</a></li>
         <% end %>
        <li><%= link_to "Organization",  controller: :organizations, action: :show, :id => current_user.organization_id %></li>
     </ul>

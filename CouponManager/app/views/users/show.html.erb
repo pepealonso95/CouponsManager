@@ -1,0 +1,15 @@
+<div>
+ 
+ <div class="card" style="width: 18rem;">
+<%= image_tag @user.avatar.url, class:"card-img-top" %>
+  <div class="card-body">
+    <h4 class="card-title"> <%= @user.name %>
+    <%= @user.lastname %></h4>
+    <h5 class="card-text"><%= @user.email %></h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Role: <%= @user.role==0 ? "Admin" : "Non-Admin"%></li>
+    <li class="list-group-item">Organization: <%= @user.organization.name %></li>
+  </ul>
+</div>
+</div>
