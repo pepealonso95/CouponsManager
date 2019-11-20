@@ -1,19 +1,26 @@
-const ReportService = require('../services/report-service');
+const promotionService = require('../services/promotion-service')
 
-module.exports = class ReportController {
-    constructor() {
-        this.reportService = new ReportService();
-    }
-    async list (ctx, next) {
-        let limit = parseInt(ctx.query.limit) || 100;
-        let offset = parseInt(ctx.query.offset) || 0;
-        let list = await this.reportService.findAll(limit, offset);
-        ctx.body = { offset: offset, limit: limit, size: list.length, data: list };
-        await next();
-    }
-    async fetch (ctx, next) {
-        let report = await this.reportService.findById(ctx.params.id);
-        ctx.body = report;
-        await next();
+
+const getAllPromotions = async (req, res) => {
+    try {
+        const promotions = await promotionService.getAllPromotions()
+        res.json(promotions)
+    } catch (error) {
+        res.status(error.status).json(error.message)
     }
 }
+
+const addPromotion = async (req, res) => {
+    try {
+        const promotion = await promotionService.addPromotion(req.body)
+        res.status(201).json(promotion)
+    } catch (error) {
+        res.status(error.status).json(error.message)
+    }
+}
+
+module.exports = {
+    getAllPromotions,
+    addPromotion
+}
+      

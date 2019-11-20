@@ -1,0 +1,10 @@
+# general settings
+app:
+  port: 8082
+  request_logging_mode: dev
+
+# database connection
+database:
+  driver: mongodb
+  address: mongodb://127.0.0.1:27017/
+  db_name: reports

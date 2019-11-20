@@ -3,7 +3,7 @@ const { Client } = require('pg');
 const client = new Client({
     user: 'nicolasdamiani',
     host: 'localhost',
-    database: 'CouponManager_development',
+    database: 'repository',
     password: 'Damiani123',
     port: 5432,
   });

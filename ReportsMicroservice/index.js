@@ -1,10 +1,11 @@
-const Koa = require('koa');
-const router = require('./controllers/router');
+const app = require('./app')
+const config = require('config-yml')
+const port = config.app.port
 
-const app = new Koa();
-const port = 9091;
-app.use(router.routes());
-app.use(router.allowedMethods());
-app.listen(port);
-
-console.log(`reports server started at port: ${port}`);
+app.listen(port, () => {
+  console.log(`Server is up on http://localhost:${port}
+  Endpoints:
+      * GET  /reports/:iata_code
+      * POST /reports
+      * GET  /health`)
+})
