@@ -12,7 +12,7 @@ const promotion = {
     trim: true
   },
   birthdate: {
-    type: String,
+    type: Number,
     required: true,
     trim: true
   },
