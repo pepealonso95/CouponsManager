@@ -7,11 +7,6 @@ class CouponUsesController < ApplicationController
   
   def create
     @coupon_use = CouponUse.new(coupon_params)
-
-    puts "---------------"
-    puts @coupon_use.promotion_id
-    puts current_user.organization_id
-    puts "---------------"
     redirect_to coupon_uses_path if @coupon_use.save
   end
 
