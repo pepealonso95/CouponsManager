@@ -80,6 +80,7 @@ class PromotionsController < ApplicationController
   end
 
   def evaluate
+    @coupon_use = nil
     token = request.headers['token']
     payload = JWT.decode token, nil, false
     contains = payload[0]['promotions'].include? promotion_id.to_s
@@ -95,11 +96,11 @@ class PromotionsController < ApplicationController
             Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
           end
         elsif @promotion.promotion_type == 1
-          @coupon_use = CouponUse.where(coupon_code: coupon_code)
-          @coupon_use = @coupon_use.first
-          if(@coupon_use!=nil && @coupon_use.remaining_uses > 0 && @coupon_use.valid_limit < DateTime.now)
-            @user_coupon_code = @user_coupon_code.where(coupon_use_id: @coupon_use.id, user_id: transaction.user_id)
-            if (@user_coupon_code.first==nil)
+          @coupon_uses = CouponUse.where(coupon_code: coupon_code)
+          @coupon_use = @coupon_uses.first
+          if(@coupon_use!=nil && @coupon_use.remaining_uses > 0 && @coupon_use.valid_limit > DateTime.now)
+            @user_coupon_code = UserCouponCode.where(coupon_use_id: @coupon_use.id, user_id: user_id).first
+            if (@user_coupon_code==nil)
               valid = true
             end
           end
@@ -120,10 +121,9 @@ class PromotionsController < ApplicationController
               @transaction = Transaction.new(transaction_code: transaction_id, promotion_id: promotion_id)
               @transaction.save
             else
-              @coupon_use = CouponUse.where(coupon_code: coupon_code).first
               @coupon_use.update_attributes(remaining_uses: @coupon_use.remaining_uses-1)
-              @user_coupon_code = UserCouponCode.new(coupon_use_id: @coupon_use.id, user_id: transaction.user_id)
-              user_coupon_code.save
+              @user_coupon_code = UserCouponCode.new(coupon_use_id: @coupon_use.id, user_id: user_id)
+              @user_coupon_code.save
             end
           else
             negativeAdd = 1
@@ -232,6 +232,10 @@ class PromotionsController < ApplicationController
 
   def coupon_code
     params.permit(:coupon_code)['coupon_code']
+  end
+
+  def user_id
+    params.permit(:user_id)['user_id']
   end
 
   def name
