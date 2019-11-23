@@ -7,7 +7,7 @@ class PromotionTest < ActiveSupport::TestCase
   test 'promotion without name' do
     promotion = Promotion.new(
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -23,7 +23,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: '',
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -38,7 +38,7 @@ class PromotionTest < ActiveSupport::TestCase
   test 'promotion without active' do
     promotion = Promotion.new(
       name: 'some promotion',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -70,7 +70,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: 'some promotion',
       active: 'true',
-      cupon_code: '',
+      coupon_code: '',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -86,7 +86,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: 'some promotion',
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -102,7 +102,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: 'some promotion',
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -118,7 +118,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: 'some promotion',
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       updated_at: DateTime.current,
@@ -133,7 +133,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: 'some promotion',
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -148,7 +148,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: 'some promotion',
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -164,7 +164,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: 'some promotion',
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,
@@ -180,7 +180,7 @@ class PromotionTest < ActiveSupport::TestCase
     promotion = Promotion.new(
       name: 'some promotion',
       active: 'true',
-      cupon_code: '2',
+      coupon_code: '2',
       is_percentage: 'true',
       promotion_type: '0',
       created_at: DateTime.current,

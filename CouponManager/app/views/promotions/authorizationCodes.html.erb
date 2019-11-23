@@ -7,7 +7,6 @@
 <% @promotions.each do |promotion| %>
 <div class="list-group-item">
  <h5>Name: <%= promotion.name %></h5>
- <h5>Code: <%= promotion.cupon_code %></h5>
  <h5>Type: <%= promotion.promotion_type==0 ? "Discount" : "Coupon"%></h5>
  <button type="button" class="btn btn-primary plus-btn unselected" id="<%=promotion.id %>">+</button>
 </div>

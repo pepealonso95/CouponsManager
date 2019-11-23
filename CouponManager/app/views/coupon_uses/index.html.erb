@@ -1,0 +1,11 @@
+<div>
+  <% @coupon_uses.each do |coupon_use| %>
+    <div><%= coupon_use.coupon_code %></div><br>
+    <div>
+      <%= link_to 'Coupon Use Detail', coupon_use %><br>
+    </div>
+    <hr>
+    <br>
+  <% end %>
+</div>
+<%= link_to 'New Coupon Use', new_coupon_use_path %>

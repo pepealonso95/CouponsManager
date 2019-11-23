@@ -2,8 +2,8 @@
   <%= form.label :name %>
   <%= form.text_field :name, autofocus: true %>
   <br/>
-  <%= form.label :cupon_code %>
-  <%= form.text_field :cupon_code, autofocus: true %>
+  <%= form.label :coupon_code %>
+  <%= form.text_field :coupon_code, autofocus: true %>
   <br/>
   <%= form.label :active %>
   <select name="active" id="active">
@@ -29,7 +29,6 @@
 <% @promotions.each do |promotion| %>
 <li class="list-group-item">
  <h4>Name: <%= promotion.name %></h4><br>
- <h4>Code: <%= promotion.cupon_code %></h4><br>
  <h4>Type: <%= promotion.promotion_type==0 ? "Discount" : "Coupon"%></h4><br>
  <h4><%= promotion.active ? "Active" : "Inactive"%></h4><br>
       <%= link_to 'Details', promotion,:class => "btn btn-primary" %>

@@ -1,0 +1,26 @@
+<%= form_with(model: coupon_use, local: true) do |form| %>
+  <%= form.label "Codigo" %>
+  <%= form.number_field :coupon_code, autofocus: true %>
+  <br/>
+
+  <%= form.label "Cantidad" %>
+  <%= form.number_field :remaining_uses, autofocus: true %>
+  <br/>
+
+
+  <%= form.label "Expiracion" %>
+  <%= form.date_field :valid_limit, autofocus: true %>
+  <br/>
+
+
+  <div class="field">
+    <%= form.label :promotion_id %>
+    <%= form.select(:promotion_id, Promotion.where(organization_id: current_user.organization_id,promotion_type: 1).map { |promotion| [promotion.name, promotion.id] })  %>
+  </div>
+
+  <!-- <div class="field">
+    <%= form.label :promotion_id %><br />
+    <%= form.select(:promotion_id, Promotion.where(organization_id: current_user.organization_id,promotion_type: 1).map { |promotion| [promotion.name, promotion.id] })  %>
+  </div> -->
+  <%= form.submit "Crear Organizacion", class: 'submit' %>
+<% end %>
