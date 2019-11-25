@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'rest-client'
+require 'json'
 
 require 'jwt'
 class PromotionsController < ApplicationController
@@ -10,6 +12,16 @@ class PromotionsController < ApplicationController
     logger.info 'new promotion'
     logger.info ENV['GMAIL_USERNAME']
     @promotion = Promotion.new
+  end
+
+  def viewReport()
+    response = RestClient.get 'http://localhost:8082/reports'
+    if response.code == 200
+        @report = response
+        render :demographicReport
+    else
+        raise "An error has occured. Response was #{response.code}"
+    end
   end
 
   def show
