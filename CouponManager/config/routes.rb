@@ -26,10 +26,12 @@ Rails.application.routes.draw do
   get 'promotions/new' => 'promotions#new'
 
   get 'promotions/testPromotion' => 'promotions#testPromotion'
+  post 'promotions/evaluate', to: 'promotions#evaluate', as: 'evaluate'
   get 'promotions/evaluate' => 'promotions#evaluate'
   get 'promotions/report' => 'promotions#report'
   get 'promotions/report_rest' => 'promotions#report_rest'
   get 'promotions/filter' => 'promotions#filter'
+
   # get 'couponUse/new' => 'coupon_use#new'
 
   resources :users

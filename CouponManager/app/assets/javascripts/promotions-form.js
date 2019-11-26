@@ -117,10 +117,7 @@ getPrimitiveCondition = function(object, cond){
     }
 
 var myvar = `<div id="primitive-condition${nextId}" class="primitive-condition">`+
-`    <select id="expresion-parameter${nextId}" class="expresion-parameter">`+
-'    <option value="TOTAL">Total</option>'+
-'    <option value="QUANTITY_PRODUCT_SIZE">Quantity / Product Size</option>'+
-'    </select>'+
+`    <input id="expresion-parameter${nextId}" class="expresion-parameter" type="text" name="expresion-parameter" value="total">`+
 `    <select id="comparator${nextId}" class="comparator">`+
 '    <option value="GREAT">></option>'+
 '    <option value="GREAT_EQ">>=</option>'+

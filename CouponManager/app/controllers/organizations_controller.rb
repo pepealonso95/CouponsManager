@@ -2,7 +2,8 @@
 
 class OrganizationsController < ApplicationController
   # include EventEmitter
-  before_action :is_admin?, only: %i[new create update edit destroy index]
+  skip_before_action :authenticate_user!, only: [:new]
+  before_action :is_admin?, only: %i[ create update edit destroy index]
 
   def new
     @organization = Organization.new

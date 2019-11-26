@@ -2,8 +2,6 @@
 
 class Condition
   module Constants
-    TOTAL = 'TOTAL'
-    QUANTITY_PRODUCT_SIZE = 'QUANTITY_PRODUCT_SIZE'
 
     LESS_EQ = 'LESS_EQ'
     LESS = 'LESS'
@@ -16,12 +14,19 @@ class Condition
     OR = 'OR'
   end
 
-  def self.getResult(condition, total, quantity_product_size)
-    declarationArray = { Constants::TOTAL => total, Constants::QUANTITY_PRODUCT_SIZE => quantity_product_size }
+  def self.getResult(condition, conditions)
     if condition['is_primitive']
-      getComparisonResult(condition['comparator'], declarationArray[condition['attribute']], condition['value'])
+      if conditions[condition['attribute'].downcase].nil?
+        false
+      else
+        if conditions[condition['attribute'].downcase].class == condition['value'].class
+          getComparisonResult(condition['comparator'], conditions[condition['attribute'].downcase], condition['value'])
+        else
+          false
+        end
+      end
     else
-      getConditionResult(condition['operator'], getResult(condition['condition1'], total, quantity_product_size), getResult(condition['condition2'], total, quantity_product_size))
+      getConditionResult(condition['operator'], getResult(condition['condition1'], conditions), getResult(condition['condition2'], conditions))
     end
   end
 
@@ -48,6 +53,8 @@ class Condition
       leftValue > rightValue
     when Constants::GREAT_EQ
       leftValue >= rightValue
+    else
+      false
     end
   end
 end

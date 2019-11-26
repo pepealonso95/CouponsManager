@@ -2,7 +2,7 @@
 
 require 'jwt'
 class PromotionsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:testToken]
+  skip_before_action :verify_authenticity_token, only: [:testToken, :evaluate]
   skip_before_action :authenticate_user!, only: [:evaluate, :testToken, :report_rest]
   before_action :is_admin? , only: [:new, :create, :destroy, :edit, :update, :authorizationCodes, :getCode]
 
@@ -108,10 +108,10 @@ class PromotionsController < ApplicationController
         if valid
           require 'json'
           condition = JSON.parse(@promotion.condition)
-          applies = Condition.getResult(condition, total, quantity_product_size)
+          applies = Condition.getResult(condition, params)
           if applies
             if @promotion.is_percentage
-              @result = total - total * (@promotion.return_value / 100)
+              @result = params["total"] - params["total"] * (@promotion.return_value / 100)
               totalSpentAdd = @result
             else
               @result = @promotion.return_value
@@ -226,9 +226,7 @@ class PromotionsController < ApplicationController
     params.require(:total).to_i
   end
 
-  def quantity_product_size
-    params.permit(:quantity_product_size)['quantity_product_size'].to_i
-  end
+
 
   def coupon_code
     params.permit(:coupon_code)['coupon_code']
