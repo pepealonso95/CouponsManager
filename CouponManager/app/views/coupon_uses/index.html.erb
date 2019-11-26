@@ -1,8 +1,11 @@
 <div>
   <% @coupon_uses.each do |coupon_use| %>
-    <div><%= coupon_use.coupon_code %></div><br>
+    <div>Promotion: <%= coupon_use.promotion.name %></div><br>
+    <div>Code: <%= coupon_use.coupon_code %></div><br>
+    <div>Remaining Uses: <%= coupon_use.remaining_uses %></div><br>
+    <div>Expiration: <%= coupon_use.valid_limit %></div><br>
     <div>
-      <%= link_to 'Coupon Use Detail', coupon_use %><br>
+      <!-- <%= link_to 'Coupon Use Detail', coupon_use %><br> -->
     </div>
     <hr>
     <br>
