@@ -80,6 +80,7 @@ class PromotionsController < ApplicationController
   end
 
   def evaluate
+    @coupon_use = nil
     token = request.headers['token']
     payload = JWT.decode token, nil, false
     contains = payload[0]['promotions'].include? promotion_id.to_s
@@ -95,8 +96,13 @@ class PromotionsController < ApplicationController
             Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
           end
         elsif @promotion.promotion_type == 1
-          if (@promotion.total_requests == 0) && (@promotion.cupon_code == cupon_code)
-            valid = true
+          @coupon_uses = CouponUse.where(coupon_code: coupon_code)
+          @coupon_use = @coupon_uses.first
+          if(@coupon_use!=nil && @coupon_use.remaining_uses > 0 && @coupon_use.valid_limit > DateTime.now)
+            @user_coupon_code = UserCouponCode.where(coupon_use_id: @coupon_use.id, user_id: user_id).first
+            if (@user_coupon_code==nil)
+              valid = true
+            end
           end
         end
         if valid
@@ -114,6 +120,10 @@ class PromotionsController < ApplicationController
             if @promotion.promotion_type == 0
               @transaction = Transaction.new(transaction_code: transaction_id, promotion_id: promotion_id)
               @transaction.save
+            else
+              @coupon_use.update_attributes(remaining_uses: @coupon_use.remaining_uses-1)
+              @user_coupon_code = UserCouponCode.new(coupon_use_id: @coupon_use.id, user_id: user_id)
+              @user_coupon_code.save
             end
           else
             negativeAdd = 1
@@ -181,11 +191,17 @@ class PromotionsController < ApplicationController
   #   render :create
   # end
 
+
   def index
     @promotions = Promotion.where(organization_id: current_user.organization_id)
     @promotions = @promotions.where(name: name) if name && name != ''
-    if cupon_code && cupon_code != ''
-      @promotions = @promotions.where(cupon_code: cupon_code)
+    if coupon_code && coupon_code != ''
+      @coupon_use = CouponUse.where(coupon_code: coupon_code)
+      if @coupon_use.empty?
+        @promotions  = []
+      else
+        @promotions = @promotions.where(id: @coupon_use.first.id)
+      end
     end
     @promotions = @promotions.where(active: active) if active && active != ''
     if promotion_type && promotion_type != ''
@@ -194,11 +210,12 @@ class PromotionsController < ApplicationController
   end
 
   def promotion_params
-    params.require(:promotion).permit(:name, :cupon_code, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
+    params.require(:promotion).permit(:name, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
   end
 
+
   def edit_promotion_params
-    params.require(:promotion).permit(:name, :cupon_code, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
+    params.require(:promotion).permit(:name, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
   end
 
   def promotion_id
@@ -213,8 +230,12 @@ class PromotionsController < ApplicationController
     params.permit(:quantity_product_size)['quantity_product_size'].to_i
   end
 
-  def cupon_code
-    params.permit(:cupon_code)['cupon_code']
+  def coupon_code
+    params.permit(:coupon_code)['coupon_code']
+  end
+
+  def user_id
+    params.permit(:user_id)['user_id']
   end
 
   def name
