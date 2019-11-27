@@ -58,7 +58,8 @@ class PromotionsController < ApplicationController
 
   def create
     @promotion = Promotion.new(promotion_params)
-
+    
+    RestClient.post 'https://couponmanager-expiration-date.herokuapp.com/promotions/addPromotion', { }.to_json, {content_type: :json, accept: :json, name: @promotion.name, expiration: @promotion.limit_time}
     redirect_to promotions_path if @promotion.save
   end
 
@@ -121,6 +122,10 @@ class PromotionsController < ApplicationController
             @result = "el cupon expiro"
           end
         end
+        if @promotion.limit_time < DateTime.now
+          valid = false
+          @result = "promocion expiro"
+        end
         if valid
           require 'json'
           condition = JSON.parse(@promotion.condition)
@@ -132,7 +137,7 @@ class PromotionsController < ApplicationController
             else
               @result = @promotion.return_value
             end
-            response = RestClient.post 'https://coupon-reports-service.herokuapp.com/reports', 
+              RestClient.post 'https://coupon-reports-service.herokuapp.com/reports', 
               {"promotion_id"=>id, 
               "iata_code"=> (params["iata_code"]!=nil ? params["iata_code"] : ""), 
               "iso_code"=> (params["iso_code"]!=nil ? params["iso_code"] : ""),
@@ -230,12 +235,12 @@ class PromotionsController < ApplicationController
   end
 
   def promotion_params
-    params.require(:promotion).permit(:name, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
+    params.require(:promotion).permit(:name, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id, :limit_time)
   end
 
 
   def edit_promotion_params
-    params.require(:promotion).permit(:name, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
+    params.require(:promotion).permit(:name, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id, :limit_time)
   end
 
   def promotion_id

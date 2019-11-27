@@ -14,9 +14,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    super
+    RestClient.post 'https://couponmanager-expiration-date.herokuapp.com/admins/addAdmin', { }.to_json, {content_type: :json, accept: :json, name: params["user"]["name"], email: params["user"]["email"]}
+  end
 
 
   def create_org
