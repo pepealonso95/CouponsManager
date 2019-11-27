@@ -78,18 +78,19 @@ class PromotionsController < ApplicationController
   def destroy
     @promotion = cached_promotion
     if @promotion.update(active: false)
-      Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
+      Rails.cache.delete("transaction-#{params["transaction_id"]}-#{promotion_id}")
       redirect_to promotions_path
     end
   end
 
   def cached_transaction
-    Rails.cache.fetch("transaction-#{transaction_id}-#{promotion_id}", expires_in: 12.hours) do
-      @promotion.transactions.exists?(transaction_code: transaction_id)
+    Rails.cache.fetch("transaction-#{params["transaction_id"]}-#{promotion_id}", expires_in: 12.hours) do
+      @promotion.transactions.exists?(transaction_code: params["transaction_id"])
     end
   end
 
   def evaluate
+    @result = "promocion invalida"
     @coupon_use = nil
     token = request.headers['token']
     payload = JWT.decode token, nil, false
@@ -103,16 +104,20 @@ class PromotionsController < ApplicationController
           transaction = cached_transaction
           unless transaction
             valid = true
-            Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
+            Rails.cache.delete("transaction-#{params["transaction_id"]}-#{promotion_id}")
           end
         elsif @promotion.promotion_type == 1
-          @coupon_uses = CouponUse.where(coupon_code: coupon_code)
+          @coupon_uses = CouponUse.where(coupon_code: params["coupon_code"])
           @coupon_use = @coupon_uses.first
           if(@coupon_use!=nil && @coupon_use.remaining_uses > 0 && @coupon_use.valid_limit > DateTime.now)
             @user_coupon_code = UserCouponCode.where(coupon_use_id: @coupon_use.id, user_id: user_id).first
             if (@user_coupon_code==nil)
               valid = true
             end
+          elseif (@coupon_use!=nil && @coupon_use.remaining_uses == 0)
+            @result = "el cupon supero el limite de usos"
+          elseif (@coupon_use!=nil && @coupon_use.valid_limit <= DateTime.now)
+            @result = "el cupon expiro"
           end
         end
         if valid
@@ -128,7 +133,7 @@ class PromotionsController < ApplicationController
             end
             positiveAdd = 1
             if @promotion.promotion_type == 0
-              @transaction = Transaction.new(transaction_code: transaction_id, promotion_id: promotion_id)
+              @transaction = Transaction.new(transaction_code: params["transaction_id"], promotion_id: promotion_id)
               @transaction.save
             else
               @coupon_use.update_attributes(remaining_uses: @coupon_use.remaining_uses-1)
@@ -137,11 +142,10 @@ class PromotionsController < ApplicationController
             end
           else
             negativeAdd = 1
-            @result = false
+            @result = "promocion no aplica"
           end
         else
           negativeAdd = 1
-          @result = false
         end
         total_time = Time.now - start_time
         @promotion.update_attributes(total_requests: @promotion.total_requests + 1,
@@ -258,7 +262,4 @@ class PromotionsController < ApplicationController
     params.permit(:promotion_type)['promotion_type']
   end
 
-  def transaction_id
-    params.permit(:transaction_id)['transaction_id']
-  end
 end
