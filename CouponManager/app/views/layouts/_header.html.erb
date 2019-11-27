@@ -21,6 +21,7 @@
          </ul>
        </li>
        <li><%= link_to "New Promotion",  new_promotion_path, method: :get%></li>
+       <li><%= link_to "Coupon Codes",  coupon_uses_path, method: :get%></li>
        <li><a data-method="get" href="/promotions/authorizationCodes">New Key</a></li>
         <% end %>
        <li><%= link_to "Organization",  controller: :organizations, action: :show, :id => current_user.organization_id %></li>
