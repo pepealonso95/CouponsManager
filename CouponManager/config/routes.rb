@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   post 'promotions/evaluate', to: 'promotions#evaluate', as: 'evaluate'
   get 'promotions/evaluate' => 'promotions#evaluate'
   get 'promotions/report' => 'promotions#report'
+  get 'promotions/demographicReport' => 'promotions#viewReport'
   get 'promotions/report_rest' => 'promotions#report_rest'
   get 'promotions/filter' => 'promotions#filter'
 

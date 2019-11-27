@@ -1,10 +1,11 @@
 # frozen_string_literal: true
-
+require 'rest-client'
 require 'jwt'
+require 'json'
 class PromotionsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:testToken, :evaluate]
   skip_before_action :authenticate_user!, only: [:evaluate, :testToken, :report_rest]
-  before_action :is_admin? , only: [:new, :create, :destroy, :edit, :update, :authorizationCodes, :getCode]
+  before_action :is_admin? , only: [:new, :create, :destroy, :edit, :update, :authorizationCodes, :getCode, :viewReport]
 
   def new
     logger.info 'new promotion'
@@ -24,7 +25,7 @@ class PromotionsController < ApplicationController
   end
 
   def viewReport()
-    response = RestClient.get 'http://localhost:8082/reports'
+    response = RestClient.get 'https://coupon-reports-service.herokuapp.com/reports'
     if response.code == 200
         @report = response
         render :demographicReport
@@ -131,6 +132,11 @@ class PromotionsController < ApplicationController
             else
               @result = @promotion.return_value
             end
+            response = RestClient.post 'https://coupon-reports-service.herokuapp.com/reports', 
+              {"promotion_id"=>id, 
+              "iata_code"=> (params["iata_code"]!=nil ? params["iata_code"] : ""), 
+              "iso_code"=> (params["iso_code"]!=nil ? params["iso_code"] : ""),
+               "birthdate"=> (params["birthdate"]!=nil ? params["birthdate"] : "") }.to_json, {content_type: :json, accept: :json}
             positiveAdd = 1
             if @promotion.promotion_type == 0
               @transaction = Transaction.new(transaction_code: params["transaction_id"], promotion_id: promotion_id)

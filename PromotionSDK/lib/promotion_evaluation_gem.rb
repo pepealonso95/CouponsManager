@@ -4,21 +4,22 @@ require 'json'
 # https://guides.rubygems.org/make-your-own-gem/
 # gem build country_time_service.gemspec
 
-class CountryTimeService
+class PromotionEvaluation
 
-    def evaluatePromotion(promotion)
-        response = RestClient.get url, { params: { promotion: promotion } }
-        if response.code == 200
-            JSON.parse(response.body)
+    def evaluatePromotion(id, conditions, token)
+        time = Time.now.getutc
+        response = RestClient.post "#{url}?id=#{id}", conditions.to_json, {content_type: :json, accept: :json, token: token}
+        time = Time.now.getutc - time
+        if (response.code == 200 && time < 1000) 
+            response.body
         else
-            raise "An error has occured. Response was #{response.code}"
+            raise "No aplica"
         end
     end
-
-    private
-
+    
+    
     def url
-        'http://localhost.com'
+        'http://localhost:3000/promotions/evaluate'
     end
 
 end

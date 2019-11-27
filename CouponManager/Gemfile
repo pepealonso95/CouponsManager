@@ -27,6 +27,7 @@ gem 'redis'
 gem 'devise'
 
 
+gem 'rest-client'
 gem 'jwt'
 
 group :development, :test do
