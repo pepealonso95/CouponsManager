@@ -18,6 +18,34 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super
   # end
 
+
+  def create_org
+    org = User.new(name: 'default_name', lastname: 'default_lastname', password: 'default_password', email: params[:email], organization_id: current_user.organization_id, role: 2)
+    org.confirmation_token = SecureRandom.urlsafe_base64
+    if org.save
+      UserMailer.non_admin_registration(org).deliver
+      # logger.info "Successfully added a non admin user: #{non_admin.email}"
+    else
+      # logger.info "Unsuccessfully added a non admin user. #{non_admin.errors.full_messages}"
+      flash['notice'] = "Error: #{org.errors.full_messages}"
+    end
+    redirect_to ''
+  end
+
+  def create_fin
+    fin = User.new(name: 'default_name', lastname: 'default_lastname', password: 'default_password', email: params[:email], organization_id: current_user.organization_id, role: 3)
+    fin.confirmation_token = SecureRandom.urlsafe_base64
+    if fin.save
+      UserMailer.non_admin_registration(fin).deliver
+      # logger.info "Successfully added a non admin user: #{non_admin.email}"
+    else
+      # logger.info "Unsuccessfully added a non admin user. #{non_admin.errors.full_messages}"
+      flash['notice'] = "Error: #{org.errors.full_messages}"
+    end
+    redirect_to ''
+  end
+
+
   def create_non_admin
     non_admin = User.new(name: 'default_name', lastname: 'default_lastname', password: 'default_password', email: params[:email], organization_id: current_user.organization_id, role: 1)
     non_admin.confirmation_token = SecureRandom.urlsafe_base64
@@ -67,48 +95,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
       # redirect_to "/users/sign_in"
     end
   end
-  # GET /resource/edit
-  # def edit
-  #   super
-  # end
+  
 
-  # PUT /resource
-  # def update
-  #   super
-  # end
-
-  # DELETE /resource
-  # def destroy
-  #   super
-  # end
-
-  # GET /resource/cancel
-  # Forces the session data which is usually expired after sign
-  # in to be expired now. This is useful if the user wants to
-  # cancel oauth signing in/up in the middle of the process,
-  # removing all OAuth session data.
-  # def cancel
-  #   super
-  # end
-
-  # protected
-
-  # If you have extra params to permit, append them to the sanitizer.
+  
   def configure_sign_up_params
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[name lastname organization_id avatar])
   end
 
-  # If you have extra params to permit, append them to the sanitizer.
-  # def configure_account_update_params
-  #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
-  # end
-
-  # The path used after sign up.
-  # def after_sign_up_path_for(resource)
-  #   super(resource)
-  # end
-
-  # The path used after sign up for inactive accounts.
+  
   def non_admin_params
     params.require(:user).permit(:password, :name, :lastname, :confirmation_token)
   end

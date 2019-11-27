@@ -3,6 +3,10 @@
 class UsersController < ApplicationController
   def new; end
 
+  def orgn; 
+    render :orgn
+  end
+
   def create; end
 
   def update; end
