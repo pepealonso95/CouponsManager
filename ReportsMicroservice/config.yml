@@ -6,5 +6,5 @@ app:
 # database connection
 database:
   driver: mongodb
-  address: mongodb://127.0.0.1:27017/
-  db_name: reports
+  address: mongodb://heroku_zfd22grg:dmn7iurtls2m28spjq7dcbmkq1@ds349628.mlab.com:49628/
+  db_name: heroku_zfd22grg

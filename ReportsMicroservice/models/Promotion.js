@@ -3,23 +3,19 @@ const mongoose = require('mongoose')
 const promotion = {
   iata_code: {
     type: String,
-    required: true,
     trim: true
   },
   iso_code: {
     type: String,
-    required: true,
     trim: true
   },
   birthdate: {
     type: Number,
-    required: true,
     trim: true
   },
   promotionId: {
     type: Number,
-    required: true,
-    trime: true
+    trim: true
   }
 }
 
