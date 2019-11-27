@@ -23,6 +23,16 @@ class PromotionsController < ApplicationController
     end
   end
 
+  def viewReport()
+    response = RestClient.get 'http://localhost:8082/reports'
+    if response.code == 200
+        @report = response
+        render :demographicReport
+    else
+        raise "An error has occured. Response was #{response.code}"
+    end
+  end
+
   def report
     @promotion = cached_promotion
     @average = @promotion.total_requests!=0 ? (@promotion.total_response_time / @promotion.total_requests) : 0
