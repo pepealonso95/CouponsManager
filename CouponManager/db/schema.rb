@@ -15,12 +15,12 @@ ActiveRecord::Schema.define(version: 2019_11_23_223701) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "coupon_uses", force: :cascade do |t|
+  create_table "coupon_use", force: :cascade do |t|
     t.integer "coupon_code"
     t.integer "remaining_uses"
     t.datetime "valid_limit"
     t.bigint "promotion_id", null: false
-    t.index ["promotion_id"], name: "index_coupon_uses_on_promotion_id"
+    t.index ["promotion_id"], name: "index_coupon_use_on_promotion_id"
   end
 
   create_table "invitations", force: :cascade do |t|
@@ -43,17 +43,18 @@ ActiveRecord::Schema.define(version: 2019_11_23_223701) do
   create_table "promotions", force: :cascade do |t|
     t.string "name"
     t.boolean "active"
+    t.integer "cupon_code"
     t.integer "promotion_type"
     t.integer "return_value", default: 0
     t.boolean "is_percentage"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "condition"
-    t.bigint "organization_id", null: false
     t.integer "total_requests", default: 0
     t.integer "total_response_time", default: 0
     t.integer "positive_response", default: 0
     t.integer "negative_response", default: 0
+    t.bigint "organization_id", null: false
     t.integer "total_spent", default: 0
     t.datetime "limit_time"
     t.index ["organization_id"], name: "index_promotions_on_organization_id"
@@ -72,9 +73,6 @@ ActiveRecord::Schema.define(version: 2019_11_23_223701) do
   create_table "user_coupon_codes", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "user_id"
-    t.bigint "coupon_use_id"
-    t.index ["coupon_use_id"], name: "index_user_coupon_codes_on_coupon_use_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -100,12 +98,11 @@ ActiveRecord::Schema.define(version: 2019_11_23_223701) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "coupon_uses", "promotions"
+  add_foreign_key "coupon_use", "promotions"
   add_foreign_key "invitations", "organizations"
   add_foreign_key "invitations", "users"
   add_foreign_key "promotions", "organizations"
   add_foreign_key "transactions", "promotions"
   add_foreign_key "transactions", "users"
-  add_foreign_key "user_coupon_codes", "coupon_uses"
   add_foreign_key "users", "organizations"
 end
