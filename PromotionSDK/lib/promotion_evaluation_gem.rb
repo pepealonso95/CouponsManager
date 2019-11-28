@@ -19,7 +19,7 @@ class PromotionEvaluation
     
     
     def url
-        'http://localhost:3000/promotions/evaluate'
+        'https://coupon-manager-arquitectura.herokuapp.com/promotions/evaluate'
     end
 
 end
