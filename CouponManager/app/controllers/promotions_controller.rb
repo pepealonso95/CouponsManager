@@ -138,7 +138,7 @@ class PromotionsController < ApplicationController
               @result = @promotion.return_value
             end
               RestClient.post 'https://coupon-reports-service.herokuapp.com/reports', 
-              {"promotion_id"=>promotion_id.to_i, 
+              {"promotionId"=>promotion_id.to_i, 
               "iata_code"=> (params["iata_code"]!=nil ? params["iata_code"] : ""), 
               "iso_code"=> (params["iso_code"]!=nil ? params["iso_code"] : ""),
                "birthdate"=> (params["birthdate"]!=nil ? params["birthdate"] : "") }.to_json, {content_type: :json, accept: :json}
@@ -173,8 +173,8 @@ class PromotionsController < ApplicationController
     else
       render json: 'unauthorized', status: :unauthorized
     end
-  rescue StandardError
-    render json: 'internal server error', status: :error
+  # rescue StandardError
+  #   render json: 'internal server error', status: :error
   end
 
   def authorizationCodes

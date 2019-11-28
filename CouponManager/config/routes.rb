@@ -9,9 +9,9 @@ Rails.application.routes.draw do
   }
 
   devise_scope :user do
-    get '/users/registrations/createOrg', to: 'users/registrations#create_org', as: 'create_org'
+    post '/users/registrations/createOrg', to: 'users/registrations#create_org', as: 'create_org'
     get '/users/orgn'  => 'users#orgn'
-    get '/users/registrations/createFin', to: 'users/registrations#create_fin', as: 'create_fin'
+    post '/users/registrations/createFin', to: 'users/registrations#create_fin', as: 'create_fin'
     get '/users/fin'  => 'users#fin'
     post 'users/registrations/nonAdmin', to: 'users/registrations#create_non_admin', as: 'create_non_admin'
     put 'users/registrations/nonAdmin', to: 'users/registrations#complete_non_admin_registration', as: 'complete_non_admin_registration'
