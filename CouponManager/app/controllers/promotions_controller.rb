@@ -173,8 +173,8 @@ class PromotionsController < ApplicationController
     else
       render json: 'unauthorized', status: :unauthorized
     end
-  # rescue StandardError
-  #   render json: 'internal server error', status: :error
+  rescue StandardError
+    render json: 'internal server error', status: :error
   end
 
   def authorizationCodes
