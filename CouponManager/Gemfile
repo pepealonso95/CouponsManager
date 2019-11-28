@@ -26,6 +26,8 @@ gem 'redis'
 # gem 'bcrypt', '~> 3.1.7'
 gem 'devise'
 
+
+gem 'rest-client'
 gem 'jwt'
 
 group :development, :test do
@@ -48,6 +50,8 @@ gem 'paperclip-cloudinary'
 gem 'bootstrap-sass'
 
 gem 'rubocop-rails_config'
+
+gem 'newrelic_rpm'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

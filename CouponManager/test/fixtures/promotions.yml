@@ -4,7 +4,7 @@ one:
   id: 1
   name: MyString
   active: false
-  cupon_code: 1
+  coupon_code: 1
   organization: one
   return_value: 1
   is_percentage: false
@@ -13,7 +13,7 @@ two:
   id: 2
   name: MyString
   active: false
-  cupon_code: 1
+  coupon_code: 1
   organization: one
   return_value: 1
   is_percentage: false

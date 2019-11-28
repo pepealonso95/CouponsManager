@@ -19,12 +19,11 @@
   <%= promotion.errors[:name].join(', ') %>
   <br/>
   <br/>
-  <%= form.label :cupon_code %>
+  <%= form.label "Expiracion" %>
   <br/>
-  <%= form.number_field :cupon_code %>
-  <%= promotion.errors[:cupon_code].join(', ') %>
+  <%= form.date_field :limit_time, autofocus: true %>
   <br/>
-  <br/>
+
   <%= form.label :type %>
   <br/>
   <select name="promotion[promotion_type]" id="promotion_promotion_type">

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
-
+require 'rest-client'
 require 'jwt'
+require 'json'
 class PromotionsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:testToken]
+  skip_before_action :verify_authenticity_token, only: [:testToken, :evaluate]
   skip_before_action :authenticate_user!, only: [:evaluate, :testToken, :report_rest]
-  before_action :is_admin? , only: [:new, :create, :destroy, :edit, :update, :authorizationCodes, :getCode]
+  before_action :is_admin? , only: [:new, :create, :destroy, :edit, :update, :authorizationCodes, :getCode, :viewReport]
 
   def new
     logger.info 'new promotion'
@@ -20,6 +21,16 @@ class PromotionsController < ApplicationController
   def cached_promotion
     Rails.cache.fetch("promotion-#{promotion_id}", expires_in: 10.minutes) do
       Promotion.find(promotion_id)
+    end
+  end
+
+  def viewReport()
+    response = RestClient.get 'https://coupon-reports-service.herokuapp.com/reports'
+    if response.code == 200
+        @report = response
+        render :demographicReport
+    else
+        raise "An error has occured. Response was #{response.code}"
     end
   end
 
@@ -47,7 +58,8 @@ class PromotionsController < ApplicationController
 
   def create
     @promotion = Promotion.new(promotion_params)
-
+    
+    RestClient.post 'https://couponmanager-expiration-date.herokuapp.com/promotions/addPromotion', { }.to_json, {content_type: :json, accept: :json, name: @promotion.name, expiration: @promotion.limit_time}
     redirect_to promotions_path if @promotion.save
   end
 
@@ -68,18 +80,20 @@ class PromotionsController < ApplicationController
   def destroy
     @promotion = cached_promotion
     if @promotion.update(active: false)
-      Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
+      Rails.cache.delete("transaction-#{params["transaction_id"]}-#{promotion_id}")
       redirect_to promotions_path
     end
   end
 
   def cached_transaction
-    Rails.cache.fetch("transaction-#{transaction_id}-#{promotion_id}", expires_in: 12.hours) do
-      @promotion.transactions.exists?(transaction_code: transaction_id)
+    Rails.cache.fetch("transaction-#{params["transaction_id"]}-#{promotion_id}", expires_in: 12.hours) do
+      @promotion.transactions.exists?(transaction_code: params["transaction_id"])
     end
   end
 
   def evaluate
+    @result = "promocion invalida"
+    @coupon_use = nil
     token = request.headers['token']
     payload = JWT.decode token, nil, false
     contains = payload[0]['promotions'].include? promotion_id.to_s
@@ -92,36 +106,57 @@ class PromotionsController < ApplicationController
           transaction = cached_transaction
           unless transaction
             valid = true
-            Rails.cache.delete("transaction-#{transaction_id}-#{promotion_id}")
+            Rails.cache.delete("transaction-#{params["transaction_id"]}-#{promotion_id}")
           end
         elsif @promotion.promotion_type == 1
-          if (@promotion.total_requests == 0) && (@promotion.cupon_code == cupon_code)
-            valid = true
+          @coupon_uses = CouponUse.where(coupon_code: params["coupon_code"], promotion_id: @promotion.id)
+          @coupon_use = @coupon_uses.first   
+          if(@coupon_use!=nil && @coupon_use.remaining_uses > 0 && @coupon_use.valid_limit > DateTime.now)
+            @user_coupon_code = UserCouponCode.where(coupon_use_id: @coupon_use.id, user_id: params["user_id"]).first
+            if (@user_coupon_code==nil)
+              valid = true
+            end
+          elsif (@coupon_use!=nil && @coupon_use.remaining_uses == 0)
+            @result = "el cupon supero el limite de usos"
+          elsif (@coupon_use!=nil && @coupon_use.valid_limit < DateTime.now)
+            @result = "el cupon expiro"
           end
+        end
+        if @promotion.limit_time < DateTime.now
+          valid = false
+          @result = "promocion expiro"
         end
         if valid
           require 'json'
           condition = JSON.parse(@promotion.condition)
-          applies = Condition.getResult(condition, total, quantity_product_size)
+          applies = Condition.getResult(condition, params)
           if applies
             if @promotion.is_percentage
-              @result = total - total * (@promotion.return_value / 100)
+              @result = params["total"] - params["total"] * (@promotion.return_value / 100)
               totalSpentAdd = @result
             else
               @result = @promotion.return_value
             end
+              RestClient.post 'https://coupon-reports-service.herokuapp.com/reports', 
+              {"promotionId"=>promotion_id.to_i, 
+              "iata_code"=> (params["iata_code"]!=nil ? params["iata_code"] : ""), 
+              "iso_code"=> (params["iso_code"]!=nil ? params["iso_code"] : ""),
+               "birthdate"=> (params["birthdate"]!=nil ? params["birthdate"] : "") }.to_json, {content_type: :json, accept: :json}
             positiveAdd = 1
             if @promotion.promotion_type == 0
-              @transaction = Transaction.new(transaction_code: transaction_id, promotion_id: promotion_id)
+              @transaction = Transaction.new(transaction_code: params["transaction_id"], promotion_id: promotion_id)
               @transaction.save
+            else
+              @coupon_use.update_attributes(remaining_uses: @coupon_use.remaining_uses-1)
+              @user_coupon_code = UserCouponCode.new(coupon_use_id: @coupon_use.id, user_id: params["user_id"])
+              @user_coupon_code.save
             end
           else
             negativeAdd = 1
-            @result = false
+            @result = "promocion no aplica"
           end
         else
           negativeAdd = 1
-          @result = false
         end
         total_time = Time.now - start_time
         @promotion.update_attributes(total_requests: @promotion.total_requests + 1,
@@ -181,11 +216,17 @@ class PromotionsController < ApplicationController
   #   render :create
   # end
 
+
   def index
     @promotions = Promotion.where(organization_id: current_user.organization_id)
     @promotions = @promotions.where(name: name) if name && name != ''
-    if cupon_code && cupon_code != ''
-      @promotions = @promotions.where(cupon_code: cupon_code)
+    if coupon_code && coupon_code != ''
+      @coupon_use = CouponUse.where(coupon_code: coupon_code)
+      if @coupon_use.empty?
+        @promotions  = []
+      else
+        @promotions = @promotions.where(id: @coupon_use.first.id)
+      end
     end
     @promotions = @promotions.where(active: active) if active && active != ''
     if promotion_type && promotion_type != ''
@@ -194,27 +235,20 @@ class PromotionsController < ApplicationController
   end
 
   def promotion_params
-    params.require(:promotion).permit(:name, :cupon_code, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
+    params.require(:promotion).permit(:name, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id, :limit_time)
   end
 
+
   def edit_promotion_params
-    params.require(:promotion).permit(:name, :cupon_code, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id)
+    params.require(:promotion).permit(:name, :condition, :active, :promotion_type, :return_value, :is_percentage, :organization_id, :limit_time)
   end
 
   def promotion_id
     params.require(:id)
   end
 
-  def total
-    params.require(:total).to_i
-  end
-
-  def quantity_product_size
-    params.permit(:quantity_product_size)['quantity_product_size'].to_i
-  end
-
-  def cupon_code
-    params.permit(:cupon_code)['cupon_code']
+  def coupon_code
+    params.permit(:coupon_code)['coupon_code']
   end
 
   def name
@@ -229,7 +263,4 @@ class PromotionsController < ApplicationController
     params.permit(:promotion_type)['promotion_type']
   end
 
-  def transaction_id
-    params.permit(:transaction_id)['transaction_id']
-  end
 end

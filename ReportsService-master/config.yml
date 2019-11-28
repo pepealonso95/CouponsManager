@@ -1,0 +1,10 @@
+# general settings
+app:
+  port: 8082
+  request_logging_mode: dev
+
+# database connection
+database:
+  driver: mongodb
+  address: mongodb://heroku_zfd22grg:dmn7iurtls2m28spjq7dcbmkq1@ds349628.mlab.com:49628/
+  db_name: heroku_zfd22grg

@@ -31,7 +31,7 @@ class PromotionsControllerTest < ActionDispatch::IntegrationTest
 end
 
   # test 'should get evaluate' do
-  #   get "/promotions/evaluate?id=1&total=1&quantity_product_size=1&transaction_id=1&cupon_code=1"
+  #   get "/promotions/evaluate?id=1&total=1&quantity_product_size=1&transaction_id=1&coupon_code=1"
   #   assert_response :error
   # end
 

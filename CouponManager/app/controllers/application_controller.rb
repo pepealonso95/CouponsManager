@@ -14,15 +14,23 @@ class ApplicationController < ActionController::Base
     redirect_to '' unless current_user.role == 0
   end
 
-    def is_admin?
-      redirect_to "" unless current_user.role==0
-    end
-    
-    def is_logged_out?
-      redirect_to "" unless !user_signed_in?
-    end
+  def is_org?
+    redirect_to '' unless current_user.role == 2
+  end
 
-    def check_admin
+  def is_fin?
+    redirect_to '' unless current_user.role == 3
+  end
+
+  def is_admin?
+      redirect_to "" unless current_user.role==0
+  end
+    
+  def is_logged_out?
+      redirect_to "" unless !user_signed_in?
+  end
+
+  def check_admin
       current_user.role==0
-    end
+  end
 end
