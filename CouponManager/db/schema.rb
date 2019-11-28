@@ -72,6 +72,9 @@ ActiveRecord::Schema.define(version: 2019_11_23_223701) do
   create_table "user_coupon_codes", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "coupon_use_id"
+    t.bigint "user_id"
+    t.index ["coupon_use_id"], name: "index_user_coupon_codes_on_coupon_use_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -103,5 +106,6 @@ ActiveRecord::Schema.define(version: 2019_11_23_223701) do
   add_foreign_key "promotions", "organizations"
   add_foreign_key "transactions", "promotions"
   add_foreign_key "transactions", "users"
+  add_foreign_key "user_coupon_codes", "coupon_uses"
   add_foreign_key "users", "organizations"
 end

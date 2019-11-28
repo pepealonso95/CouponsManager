@@ -109,16 +109,16 @@ class PromotionsController < ApplicationController
             Rails.cache.delete("transaction-#{params["transaction_id"]}-#{promotion_id}")
           end
         elsif @promotion.promotion_type == 1
-          @coupon_uses = CouponUse.where(coupon_code: params["coupon_code"])
-          @coupon_use = @coupon_uses.first
+          @coupon_uses = CouponUse.where(coupon_code: params["coupon_code"], promotion_id: @promotion.id)
+          @coupon_use = @coupon_uses.first   
           if(@coupon_use!=nil && @coupon_use.remaining_uses > 0 && @coupon_use.valid_limit > DateTime.now)
-            @user_coupon_code = UserCouponCode.where(coupon_use_id: @coupon_use.id, user_id: user_id).first
+            @user_coupon_code = UserCouponCode.where(coupon_use_id: @coupon_use.id, user_id: params["user_id"]).first
             if (@user_coupon_code==nil)
               valid = true
             end
-          elseif (@coupon_use!=nil && @coupon_use.remaining_uses == 0)
+          elsif (@coupon_use!=nil && @coupon_use.remaining_uses == 0)
             @result = "el cupon supero el limite de usos"
-          elseif (@coupon_use!=nil && @coupon_use.valid_limit <= DateTime.now)
+          elsif (@coupon_use!=nil && @coupon_use.valid_limit < DateTime.now)
             @result = "el cupon expiro"
           end
         end
@@ -138,7 +138,7 @@ class PromotionsController < ApplicationController
               @result = @promotion.return_value
             end
               RestClient.post 'https://coupon-reports-service.herokuapp.com/reports', 
-              {"promotion_id"=>id, 
+              {"promotion_id"=>promotion_id.to_i, 
               "iata_code"=> (params["iata_code"]!=nil ? params["iata_code"] : ""), 
               "iso_code"=> (params["iso_code"]!=nil ? params["iso_code"] : ""),
                "birthdate"=> (params["birthdate"]!=nil ? params["birthdate"] : "") }.to_json, {content_type: :json, accept: :json}
@@ -148,7 +148,7 @@ class PromotionsController < ApplicationController
               @transaction.save
             else
               @coupon_use.update_attributes(remaining_uses: @coupon_use.remaining_uses-1)
-              @user_coupon_code = UserCouponCode.new(coupon_use_id: @coupon_use.id, user_id: user_id)
+              @user_coupon_code = UserCouponCode.new(coupon_use_id: @coupon_use.id, user_id: params["user_id"])
               @user_coupon_code.save
             end
           else
@@ -247,18 +247,8 @@ class PromotionsController < ApplicationController
     params.require(:id)
   end
 
-  def total
-    params.require(:total).to_i
-  end
-
-
-
   def coupon_code
     params.permit(:coupon_code)['coupon_code']
-  end
-
-  def user_id
-    params.permit(:user_id)['user_id']
   end
 
   def name
